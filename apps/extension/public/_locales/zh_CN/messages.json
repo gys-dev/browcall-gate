@@ -1,0 +1,335 @@
+{
+	"ext_name": {
+		"message": "记事本-在线上",
+		"description": "Блокнот - онлайн"
+	},
+	"ext_short_name": {
+		"message": "记事本-在线上",
+		"description": "Блокнот - онлайн"
+	},
+	"ext_description": {
+		"message": "记事本-在线上。 扩展用于镀铬与同步的特征。 打开编辑和保存的数据在任何一台计算机。",
+		"description": "Блокнот-онлайн. Расширение для Хрома с функцией синхронизации. Откройте и редактируйте сохраненные данные на любом компьютере."
+	},
+	"bg_copy": {
+		"message": "复制",
+		"description": "Скопировать"
+	},
+	"bg_address": {
+		"message": "URL",
+		"description": "URL страницы"
+	},
+	"bg_link": {
+		"message": "链接",
+		"description": "ссылка"
+	},
+	"bg_text": {
+		"message": "文本",
+		"description": "текст"
+	},
+	"login": {
+		"message": "登录",
+		"description": "Вход"
+	},
+	"registration": {
+		"message": "注册",
+		"description": "Регистрация"
+	},
+	"symbols": {
+		"message": "字或更多",
+		"description": "и более символов"
+	},
+	"forget_pass": {
+		"message": "忘记密码？",
+		"description": "Забыл пароль?"
+	},
+	"menu": {
+		"message": "菜单",
+		"description": "Меню"
+	},
+	"export": {
+		"message": "出口",
+		"description": "Экспорт"
+	},
+	"import": {
+		"message": "进口",
+		"description": "Импорт"
+	},
+	"history": {
+		"message": "恢复表",
+		"description": "Восстановить лист"
+	},
+	"recovery_pass": {
+		"message": "密碼重設",
+		"description": "Сменить пароль"
+	},
+	"logout": {
+		"message": "注销",
+		"description": "Выйти"
+	},
+	"donate": {
+		"message": "祭献",
+		"description": "Вклад в развитие"
+	},
+	"star": {
+		"message": "评估应用程序",
+		"description": "Оценить расширение"
+	},
+	"settings": {
+		"message": "設定",
+		"description": "Настройки"
+	},
+	"hello": {
+		"message": "嗨",
+		"description": "Привет"
+	},
+	"lord": {
+		"message": "Unregistered",
+		"description": "Господин"
+	},
+	"add_list": {
+		"message": "添加片",
+		"description": "Добавить лист"
+	},
+	"save": {
+		"message": "数据同步",
+		"description": "Сохранить"
+	},
+	"session": {
+		"message": "其他会议",
+		"description": "Другие открытые сессии"
+	},
+	"about": {
+		"message": "关于 ",
+		"description": "О программе v"
+	},
+	"name_list": {
+		"message": "新叶",
+		"description": "Новый лист"
+	},
+	"email": {
+		"message": "郵件",
+		"description": "Почта"
+	},
+	"pass": {
+		"message": "密码",
+		"description": "Пароль"
+	},
+	"enter": {
+		"message": "登入",
+		"description": "Войти"
+	},
+	"username": {
+		"message": "使用者名稱",
+		"description": "Имя пользователя"
+	},
+	"load": {
+		"message": "Loading, please wait...",
+		"description": "Загрузка, подождите..."
+	},
+	"textarea": {
+		"message": "(^_^)",
+		"description": "Новый полезный лист для Ваших заметок ツ"
+	},
+	"select_all": {
+		"message": "全选",
+		"description": "Выделить всё"
+	},
+	"download": {
+		"message": "下载",
+		"description": "Скачать"
+	},
+	"delete_mes": {
+		"message": "你想删除这一页？",
+		"description": "Удалить лист?"
+	},
+	"upload_mes": {
+		"message": "文件太大。 可能出现的问题与保护和同步。<br/><span>继续啊？</span>",
+		"description": "Файл слишком большой. Могут возникнуть проблемы с сохранением и синхронизацией.<br/><span>Все равно продолжить?</span>"
+	},
+	"exit_mes": {
+		"message": "所有数据将被删除。 你想继续吗？",
+		"description": "Все записи будут удалены. Вы действительно хотите продолжить?"
+	},
+	"upload_yes": {
+		"message": "是的",
+		"description": "Да"
+	},
+	"upload_cancel": {
+		"message": "取消",
+		"description": "Отменить"
+	},
+	"upload_ok": {
+		"message": "进口成功。",
+		"description": "Импорт выполнен успешно."
+	},
+	"upload_go": {
+		"message": "进口文件...",
+		"description": "Импорт файла..."
+	},
+	"session_not_defined": {
+		"message": "没有",
+		"description": "не определено"
+	},
+	"session_delete": {
+		"message": "删除",
+		"description": "Удалить"
+	},
+	"session_create": {
+		"message": "创建时间",
+		"description": "Время создания"
+	},
+	"session_last": {
+		"message": "最近",
+		"description": "Время последнего входа"
+	},
+	"session_kill_select": {
+		"message": "删除选中的会话",
+		"description": "Закрыть отмеченные сессии"
+	},
+	"session_kill_all": {
+		"message": "删除所有记录（本次会话除外）",
+		"description": "Закрыть все сессии, кроме текущей"
+	},
+	"opt_lang": {
+		"message": "语言",
+		"description": "Язык"
+	},
+	"opt_button": {
+		"message": "保存变化",
+		"description": "Сохранить изменения"
+	},
+	"settings_radio_name": {
+		"message": "改变窗口的尺寸",
+		"description": "Изменить размер окна"
+	},
+	"opt_very_small": {
+		"message": "非常小",
+		"description": "Очень маленький"
+	},
+	"opt_small": {
+		"message": "小",
+		"description": "Маленький"
+	},
+	"opt_normal": {
+		"message": "正常的",
+		"description": "Нормальный"
+	},
+	"opt_big": {
+		"message": "大",
+		"description": "Большой"
+	},
+	"opt_editor_use": {
+		"message": "新的文本编辑器",
+		"description": "Включить продвинутый визуальный редактор"
+	},
+	"opt_checkbox_hide": {
+		"message": "隐藏在面板上离开",
+		"description": "Скрывать панель слева"
+	},
+	"settings_s_name": {
+		"message": "字体大小：",
+		"description": "Размер шрифта:"
+	},
+	"choice_name": {
+		"message": "选择一种方便的版本",
+		"description": "Выберите удобную версию"
+	},
+	"choce_prev": {
+		"message": "选择不同的版本",
+		"description": "Выбрать другую версию"
+	},
+	"chioce_with_authorization": {
+		"message": "有了授权",
+		"description": "С регистрацией"
+	},
+	"chioce_without_authorization": {
+		"message": "没有注册",
+		"description": "Без регистрации"
+	},
+	"chioce_with_text": {
+		"message": "在这个版本的笔记本电脑登记所需的个人帐户通过电子邮件。 这将允许你进入你的帐户从多个设备和同步的所有信息进入一个单一的应用程序。 你的数据将受密码保护和保存在服务器上的云。 工作在这个版本需要的强制性互联网连接。",
+		"description": "В этой версии блокнота требуется регистрация личного аккаунта с помощью электронной почты. Это позволит Вам заходить в свой аккаунт с нескольких устройств и синхронизировать всю информацию в едином приложении. Ваши данные будут защищены паролем и храниться на серверном облаке. Для работы в этой версии необходимо обязательное подключение к интернету."
+	},
+	"chioce_without_text": {
+		"message": "这个版本的记事本不需要注册的一个账户，作为适用于只有一个装置。 所有信息都存储的直接浏览器和不移的时关闭。 工作中的应用程序，可以访问没有互联网连接。",
+		"description": "Эта версия блокнота не требует регистрации личного аккаунта, так как предназначена для использования только на одном устройстве. Вся информация хранится прямо в Вашем браузере и не удаляется при его закрытии. Работа в приложении может осуществляться без подключения к интернету."
+	},
+	"e_not_email_or_pass": {
+		"message": "密码错误/电子邮件。",
+		"description": "Некорректный пароль/почта."
+	},
+	"e_incorrect": {
+		"message": "错误的 $msg$",
+		"description": "Некорректный $msg$",
+		"placeholders": {
+			"msg": {
+				"content": "$1"
+			}
+		}
+	},
+	"e_error": {
+		"message": "和意想不到的错误。",
+		"description": "Непредвиденная ошибка."
+	},
+	"e_server_not": {
+		"message": "服务器没有反应。我们修复。我很抱歉。",
+		"description": "Сервер не отвечает.<br/>Мы уже знаем о проблеме и работаем над ее решением.<br/>Приносим извинения."
+	},
+	"e_email_use": {
+		"message": "邮件是已经采取。",
+		"description": "Почта уже занята."
+	},
+	"e_invalid": {
+		"message": "流是不正确的。请登录。",
+		"description": "Сессия неверная. Пожалуйста, войдите."
+	},
+	"e_invalid_session": {
+		"message": "流是不正确的。请登录。",
+		"description": "Сессия неверная. Пожалуйста, войдите."
+	},
+	"e_load_content": {
+		"message": "数据载入错误。",
+		"description": "Ошибка загрузки данных."
+	},
+	"e_not_active": {
+		"message": "请选择片。",
+		"description": "Пожалуйста, выберите лист."
+	},
+	"e_no_data": {
+		"message": "没有数据。",
+		"description": "Нет данных."
+	},
+	"e_please_valid": {
+		"message": "请输入正确的: ",
+		"description": "Пожалуйста, введите верно: "
+	},
+	"e_file_choose": {
+		"message": "不可能进口的文件。 请选择另一个。",
+		"description": "Невозможно импортировать файл.<br/>Пожалуйста, выберите другой."
+	},
+	"e_file_big": {
+		"message": "该文件是较大的比100KB的。 请选择另一个。",
+		"description": "Файл больше 100кБ.<br/>Пожалуйста, выберите другой."
+	},
+	"e_file_little_big": {
+		"message": "该文件是很大的。 问题可能会出现同步。",
+		"description": "Файл большой.<br/>Могут возникнуть проблемы с синхронизацией."
+	},
+	"e_file_not": {
+		"message": "操作系统不会支持文件上传。",
+		"description": "ОС не поддерживает загрузку файлов."
+	},
+	"e_file_no": {
+		"message": "不可能进口的文件。<br/>检查的连接到互联网。",
+		"description": "Невозможно импортировать файл.<br/>Проверьте подключение к интернету."
+	},
+	"e_change_password": {
+		"message": "Password change successful!",
+		"description": "Email for sending new password"
+	},
+	"e_incorrect_password": {
+		"message": "Password is not match on your account",
+		"description": "Password is not match on your account"
+	}
+}

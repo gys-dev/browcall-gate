@@ -1,0 +1,70 @@
+Es un simple bloc de notas - en línea. Puede guardar cualquier texto en Internet y abrirlo en cualquier lugar. Bloc de notas guarda y sincroniza automáticamente.
+Puede crear cualquier número de nuevos bloces de notas para diferentes casos.
+Regístrese, por lo que nadie podría ver el contenido de su bloc de notas.
+
+disfrute de!
+
+
+
+###############################
+
+
+
+Pronto:
+* Aplicación para Android, iOS
+
+###############################
+
+Versión 1.15.104
+* Búsqueda por el nombre de la hoja de cálculo
+* Fueron corregidos los errores de poco bulto
+
+Versión 1.13.95
+* Ahora usted puede abrir el Bloc de notas en una ventana separada
+
+Versión 1.12.92
+* Mover la nota en la lista
+* Fueron corregidos los errores de poco bulto
+
+Versión 1.11.83
+* Versión sin conexión
+
+Versión 1.10.76
+* Añadir la recuperación de archivos eliminados
+
+Versión 1.9.67
+* Se ha añadido un nuevo editor de texto
+
+Versión 1.8.63
+* Añadida la opción para cambiar el tamaño de la ventana y el tamaño de la fuente
+
+Versión 1.7.57
+* Mejora de la seguridad. (Ahora se puede cerrar todas las sesiones abiertas en otros dispositivos)
+
+Versión 1.5.51
+* Fue añadida la posibilidad de importar archivos
+
+Versión 1.4.41
+* Fue añadida la posibilidad de cambiar contraseña por Correo electronico
+
+Versión 1.3.25
+* Fue añadido menú desplegable (clic de derecho)
+
+Versión 1.2.15
+* Fue añadida la posibilidad de exportar en archivo
+
+Versión 1.1.1
+* Fueron corregidos los errores de poco bulto
+* La aplicación fue traducida a varios idiomas
+
+Versión 1.0.2
+* Fue añadida la posibilidad de cambiar el título de hoja
+* Inicio de sesión fue corregido
+
+Versión 0.9.63
+* La aplicación fue añadida a Webstore
+
+
+
+
+

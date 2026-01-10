@@ -1,0 +1,8 @@
+.nx/installation
+.nx/cache
+.nx/workspace-data
+vite.config.*.timestamp*
+dist/
+node_modules/
+.DS_Store
+packages/*/node_modules/

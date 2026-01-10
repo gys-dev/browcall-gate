@@ -1,0 +1,93 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "name": "gpt-auto-api",
+  "root": "apps/gpt-auto-api",
+  "projectType": "application",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "platform": "node",
+        "outputPath": "dist/apps/gpt-auto-api",
+        "format": ["cjs"],
+        "bundle": false,
+        "main": "apps/gpt-auto-api/src/main.ts",
+        "tsConfig": "apps/gpt-auto-api/tsconfig.app.json",
+        "assets": ["apps/gpt-auto-api/src/assets"],
+        "generatePackageJson": true,
+        "esbuildOptions": {
+          "entryNames": "[dir]/[name]",
+          "sourcemap": true,
+          "outExtension": {
+            ".js": ".js"
+          }
+        }
+      },
+      "configurations": {
+        "development": {},
+        "production": {
+          "esbuildOptions": {
+            "sourcemap": false,
+            "outExtension": {
+              ".js": ".js"
+            }
+          }
+        }
+      }
+    },
+
+    "prune-lockfile": {
+      "executor": "@nx/js:prune-lockfile",
+      "dependsOn": ["build"],
+      "cache": true,
+      "outputs": [
+        "{workspaceRoot}/dist/apps/gpt-auto-api/package.json",
+        "{workspaceRoot}/dist/apps/gpt-auto-api/package-lock.json"
+      ],
+      "options": {
+        "buildTarget": "build"
+      }
+    },
+
+    "copy-workspace-modules": {
+      "executor": "@nx/js:copy-workspace-modules",
+      "dependsOn": ["build"],
+      "cache": true,
+      "outputs": [
+        "{workspaceRoot}/dist/apps/gpt-auto-api/workspace_modules"
+      ],
+      "options": {
+        "buildTarget": "build"
+      }
+    },
+
+    "prune": {
+      "executor": "nx:noop",
+      "dependsOn": [
+        "prune-lockfile",
+        "copy-workspace-modules"
+      ]
+    },
+
+    "serve": {
+      "executor": "@nx/js:node",
+      "continuous": true,
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "gpt-auto-api:build",
+        "runBuildTargetDependencies": false
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "gpt-auto-api:build:development"
+        },
+        "production": {
+          "buildTarget": "gpt-auto-api:build:production"
+        }
+      }
+    }
+  }
+}

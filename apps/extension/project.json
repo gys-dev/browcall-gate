@@ -1,0 +1,45 @@
+{
+  "name": "extension",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/extension/src",
+  "projectType": "application",
+  "tags": [],
+
+  "targets": {
+    "build-app": {
+      "executor": "@nx/vite:build",
+      "options": {
+        "configFile": "apps/extension/vite.config.mts",
+        "outputPath": "dist/apps/extension"
+      }
+    },
+
+    "build-background": {
+      "executor": "@nx/vite:build",
+      "options": {
+        "configFile": "apps/extension/vite.background.config.mts",
+        "outputPath": "dist/apps/extension"
+      }
+    },
+
+    "build-inject": {
+      "executor": "@nx/vite:build",
+      "options": {
+        "configFile": "apps/extension/vite.inject.config.mts",
+        "outputPath": "dist/apps/extension"
+      }
+    },
+
+    "build-all": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          { "command": "nx run extension:build-app" },
+          { "command": "nx run extension:build-background" },
+          { "command": "nx run extension:build-inject" }
+        ],
+        "parallel": false
+      }
+    }
+  }
+}

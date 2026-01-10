@@ -1,0 +1,62 @@
+{
+  "manifest_version": 3,
+  "name": "__MSG_ext_name__",
+  "description": "__MSG_ext_description__",
+  "version": "1.15.120",
+  "author": "Dhy Solutions Team",
+  "default_locale": "en",
+  "short_name": "__MSG_ext_short_name__",
+  "icons": {
+    "48": "img/notepad_48.png",
+    "128": "img/notepad_128.png"
+  },
+  "action": {
+    "default_icon": {
+      "24": "img/a_6.png",
+      "48": "img/notepad_48.png",
+      "128": "img/notepad_128.png"
+    },
+    "default_title": "__MSG_ext_short_name__",
+    "default_popup": "index.html"
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "permissions": [
+    "storage",
+    "contextMenus",
+    "notifications",
+    "activeTab"
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "assets/inject-style.css"
+      ],
+      "matches": [
+        "https://www.perplexity.ai/*",
+        "https://chatgpt.com/*"
+      ]
+    }
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.perplexity.ai/*",
+        "https://chatgpt.com/*"
+      ],
+      "js": [
+        "inject.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "host_permissions": [
+    "https://apis.google.com/*",
+    "https://ssl.google-analytics.com/*",
+    "https://www.googletagmanager.com/*",
+    "https://www.gstatic.com/*",
+    "https://api.hostip.info/*"
+  ]
+}

@@ -1,0 +1,335 @@
+{
+	"ext_name": {
+		"message": "Bloco de notas - on-line",
+		"description": "Блокнот - онлайн"
+	},
+	"ext_short_name": {
+		"message": "Bloco de notas - on-line",
+		"description": "Блокнот - онлайн"
+	},
+	"ext_description": {
+		"message": "O bloco de notas on-line. Extensão do Chrome, com funções de sincronização. Abra e edite dados armazenados em qualquer computador.",
+		"description": "Блокнот-онлайн. Расширение для Хрома с функцией синхронизации. Откройте и редактируйте сохраненные данные на любом компьютере."
+	},
+	"bg_copy": {
+		"message": "Copiar",
+		"description": "Скопировать"
+	},
+	"bg_address": {
+		"message": "URL",
+		"description": "URL страницы"
+	},
+	"bg_link": {
+		"message": "link",
+		"description": "ссылка"
+	},
+	"bg_text": {
+		"message": "texto",
+		"description": "текст"
+	},
+	"login": {
+		"message": "Entrada",
+		"description": "Вход"
+	},
+	"registration": {
+		"message": "Registar",
+		"description": "Регистрация"
+	},
+	"symbols": {
+		"message": "ou mais caracteres",
+		"description": "и более символов"
+	},
+	"forget_pass": {
+		"message": "Esqueceu a sua senha?",
+		"description": "Забыл пароль?"
+	},
+	"menu": {
+		"message": "Menu",
+		"description": "Меню"
+	},
+	"export": {
+		"message": "Exportação",
+		"description": "Экспорт"
+	},
+	"import": {
+		"message": "Importação",
+		"description": "Импорт"
+	},
+	"history": {
+		"message": "Recuperando de página ",
+		"description": "Восстановить лист"
+	},
+	"recovery_pass": {
+		"message": "Alterar senha",
+		"description": "Сменить пароль"
+	},
+	"logout": {
+		"message": "Sair",
+		"description": "Выйти"
+	},
+	"donate": {
+		"message": "Аgradecer",
+		"description": "Вклад в развитие"
+	},
+	"star": {
+		"message": "Avalie o aplicativo",
+		"description": "Оценить расширение"
+	},
+	"settings": {
+		"message": "Configuração",
+		"description": "Настройки"
+	},
+	"hello": {
+		"message": "Olá",
+		"description": "Привет"
+	},
+	"lord": {
+		"message": "Unregistered",
+		"description": "Господин"
+	},
+	"add_list": {
+		"message": "Adicionar página",
+		"description": "Добавить лист"
+	},
+	"save": {
+		"message": "Salvar",
+		"description": "Сохранить"
+	},
+	"session": {
+		"message": "Outros estão abertos a sessão",
+		"description": "Другие открытые сессии"
+	},
+	"about": {
+		"message": "Sobre o programa v",
+		"description": "О программе v"
+	},
+	"name_list": {
+		"message": "Nova página",
+		"description": "Новый лист"
+	},
+	"email": {
+		"message": "Correio eletrónico",
+		"description": "Почта"
+	},
+	"pass": {
+		"message": "Palavra-passe",
+		"description": "Пароль"
+	},
+	"enter": {
+		"message": "Iniciar sessão",
+		"description": "Войти"
+	},
+	"username": {
+		"message": "Nome de usuário",
+		"description": "Имя пользователя"
+	},
+	"load": {
+		"message": "Loading, please wait...",
+		"description": "Загрузка, подождите..."
+	},
+	"textarea": {
+		"message": "De novo uma página útil para Suas anotações ツ",
+		"description": "Новый полезный лист для Ваших заметок ツ"
+	},
+	"select_all": {
+		"message": "Selecionar todos",
+		"description": "Выделить всё"
+	},
+	"download": {
+		"message": "Download",
+		"description": "Скачать"
+	},
+	"delete_mes": {
+		"message": "Eliminar a página?",
+		"description": "Удалить лист?"
+	},
+	"upload_mes": {
+		"message": "O arquivo é muito grande. Podem ocorrer problemas com a preservação e a sincronização.<br/><span>Continuar?</span>",
+		"description": "Файл слишком большой. Могут возникнуть проблемы с сохранением и синхронизацией.<br/><span>Все равно продолжить?</span>"
+	},
+	"exit_mes": {
+		"message": "Todos os dados serão apagados. Você deseja continuar?",
+		"description": "Все записи будут удалены. Вы действительно хотите продолжить?"
+	},
+	"upload_yes": {
+		"message": "Sim",
+		"description": "Да"
+	},
+	"upload_cancel": {
+		"message": "Cancelar",
+		"description": "Отменить"
+	},
+	"upload_ok": {
+		"message": "A importação foi bem-sucedida.",
+		"description": "Импорт выполнен успешно."
+	},
+	"upload_go": {
+		"message": "O ficheiro é importado...",
+		"description": "Импорт файла..."
+	},
+	"session_not_defined": {
+		"message": "não definido",
+		"description": "не определено"
+	},
+	"session_delete": {
+		"message": "Remover",
+		"description": "Удалить"
+	},
+	"session_create": {
+		"message": "O tempo de criação",
+		"description": "Время создания"
+	},
+	"session_last": {
+		"message": "A última hora de logon",
+		"description": "Время последнего входа"
+	},
+	"session_kill_select": {
+		"message": "Fechar marcado sessão",
+		"description": "Закрыть отмеченные сессии"
+	},
+	"session_kill_all": {
+		"message": "Fechar todas as sessões, além de atual",
+		"description": "Закрыть все сессии, кроме текущей"
+	},
+	"opt_lang": {
+		"message": "linguagem",
+		"description": "Язык"
+	},
+	"opt_button": {
+		"message": "Salvar as alterações",
+		"description": "Сохранить изменения"
+	},
+	"settings_radio_name": {
+		"message": "Alterar o tamanho da janela",
+		"description": "Изменить размер окна"
+	},
+	"opt_very_small": {
+		"message": "Pequenininho",
+		"description": "Очень маленький"
+	},
+	"opt_small": {
+		"message": "Pequeno",
+		"description": "Маленький"
+	},
+	"opt_normal": {
+		"message": "Normal",
+		"description": "Нормальный"
+	},
+	"opt_big": {
+		"message": "Grande",
+		"description": "Большой"
+	},
+	"opt_editor_use": {
+		"message": "Ativar o editor avançado",
+		"description": "Включить продвинутый визуальный редактор"
+	},
+	"opt_checkbox_hide": {
+		"message": "Ocultar a barra da esquerda",
+		"description": "Скрывать панель слева"
+	},
+	"settings_s_name": {
+		"message": "Tamanho da fonte:",
+		"description": "Размер шрифта:"
+	},
+	"choice_name": {
+		"message": "Escolha confortáveis versão",
+		"description": "Выберите удобную версию"
+	},
+	"choce_prev": {
+		"message": "Escolher uma versão diferente",
+		"description": "Выбрать другую версию"
+	},
+	"chioce_with_authorization": {
+		"message": "Com autorização",
+		"description": "С регистрацией"
+	},
+	"chioce_without_authorization": {
+		"message": "Sem autorização",
+		"description": "Без регистрации"
+	},
+	"chioce_with_text": {
+		"message": "Nesta versão do bloco de notas é necessário o registo de uma conta pessoal através de e-mail. Isso permitirá que Você entrar na sua conta a partir de múltiplos dispositivos e sincronizar todas as informações em um único aplicativo. Os seus dados são protegidos por senha e armazenados em um servidor na nuvem. Para trabalhar nesta versão, você deve obrigatoriedade de ligação à internet.",
+		"description": "В этой версии блокнота требуется регистрация личного аккаунта с помощью электронной почты. Это позволит Вам заходить в свой аккаунт с нескольких устройств и синхронизировать всю информацию в едином приложении. Ваши данные будут защищены паролем и храниться на серверном облаке. Для работы в этой версии необходимо обязательное подключение к интернету."
+	},
+	"chioce_without_text": {
+		"message": "Esta versão do bloco de notas não requer registro de conta pessoal, assim como é para uso apenas em um único dispositivo. Todas as informações são armazenadas diretamente no Seu navegador, e não é removido quando você fechá-lo. O trabalho no aplicativo pode ser acessado sem ligação à internet.",
+		"description": "Эта версия блокнота не требует регистрации личного аккаунта, так как предназначена для использования только на одном устройстве. Вся информация хранится прямо в Вашем браузере и не удаляется при его закрытии. Работа в приложении может осуществляться без подключения к интернету."
+	},
+	"e_not_email_or_pass": {
+		"message": "Incorretos senha/e-mail.",
+		"description": "Некорректный пароль/почта."
+	},
+	"e_incorrect": {
+		"message": "Incorrecto $msg$",
+		"description": "Некорректный $msg$",
+		"placeholders": {
+			"msg": {
+				"content": "$1"
+			}
+		}
+	},
+	"e_error": {
+		"message": "Ocorreu um erro inesperado.",
+		"description": "Непредвиденная ошибка."
+	},
+	"e_server_not": {
+		"message": "O servidor não está respondendo.<br/>Nós já sabemos sobre o problema e estamos trabalhando para resolvê-lo.<br/>Pedimos desculpas.",
+		"description": "Сервер не отвечает.<br/>Мы уже знаем о проблеме и работаем над ее решением.<br/>Приносим извинения."
+	},
+	"e_email_use": {
+		"message": "O email já está ocupada.",
+		"description": "Почта уже занята."
+	},
+	"e_invalid": {
+		"message": "Sessão errada. Por favor, faça o login.",
+		"description": "Сессия неверная. Пожалуйста, войдите."
+	},
+	"e_invalid_session": {
+		"message": "Sessão errada. Por favor, faça o login.",
+		"description": "Сессия неверная. Пожалуйста, войдите."
+	},
+	"e_load_content": {
+		"message": "Erro ao carregar dados.",
+		"description": "Ошибка загрузки данных."
+	},
+	"e_not_active": {
+		"message": "Por favor, selecione a página.",
+		"description": "Пожалуйста, выберите лист."
+	},
+	"e_no_data": {
+		"message": "Não há dados disponíveis.",
+		"description": "Нет данных."
+	},
+	"e_please_valid": {
+		"message": "Por favor, digite o verdadeiro: ",
+		"description": "Пожалуйста, введите верно: "
+	},
+	"e_file_choose": {
+		"message": "Não é possível importar o ficheiro.<br/>por Favor, escolha outro.",
+		"description": "Невозможно импортировать файл.<br/>Пожалуйста, выберите другой."
+	},
+	"e_file_big": {
+		"message": "O arquivo de mais de 100kb.<br/>por Favor, escolha outro.",
+		"description": "Файл больше 100кБ.<br/>Пожалуйста, выберите другой."
+	},
+	"e_file_little_big": {
+		"message": "O arquivo é grande.<br/>Podem ocorrer problemas de sincronização.",
+		"description": "Файл большой.<br/>Могут возникнуть проблемы с синхронизацией."
+	},
+	"e_file_not": {
+		"message": "O sistema operacional não suporta o carregamento de ficheiros.",
+		"description": "ОС не поддерживает загрузку файлов."
+	},
+	"e_file_no": {
+		"message": "Não é possível importar o ficheiro.<br/>Verifique sua conexão com a internet.",
+		"description": "Невозможно импортировать файл.<br/>Проверьте подключение к интернету."
+	},
+	"e_change_password": {
+		"message": "Password change successful!",
+		"description": "Email for sending new password"
+	},
+	"e_incorrect_password": {
+		"message": "Password is not match on your account",
+		"description": "Password is not match on your account"
+	}
+}
