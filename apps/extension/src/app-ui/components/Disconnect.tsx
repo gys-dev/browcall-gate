@@ -1,12 +1,15 @@
 import React from "react"
+import { SessionPayload } from "../../common/interface"
 
 
 interface DisconnectProps {
     onDisconnect: () => void
+    session: SessionPayload
 }
 
 export const Disconnect: React.FC<DisconnectProps> = ({
-    onDisconnect
+    onDisconnect,
+    session
 }) => {
 
     return (
@@ -17,16 +20,25 @@ export const Disconnect: React.FC<DisconnectProps> = ({
                         <b>TabID:</b>
                     </div>
                     <div className="inline-block" >
-                        <p>abccksjshhjaiwiwiwi</p>
+                        <p>{session.tabId}</p>
                     </div>
                 </div>
 
                 <div className="flex flex-row align-middle mb-2 mr-2 text-md">
                     <div className="inline-block w-40" >
-                        <b>TabID:</b>
+                        <b>API Port:</b>
                     </div>
                     <div className="inline-block" >
-                        <p>abccksjshhjaiwiwiwi</p>
+                        <p>{session.apiPort}</p>
+                    </div>
+                </div>
+
+                <div className="flex flex-row align-middle mb-2 mr-2 text-md">
+                    <div className="inline-block w-40" >
+                        <b>Socket Port:</b>
+                    </div>
+                    <div className="inline-block" >
+                        <p>{session.socketPort}</p>
                     </div>
                 </div>
 

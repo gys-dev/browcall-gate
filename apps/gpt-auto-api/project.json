@@ -7,16 +7,22 @@
   "targets": {
     "build": {
       "executor": "@nx/esbuild:esbuild",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "defaultConfiguration": "production",
       "options": {
         "platform": "node",
         "outputPath": "dist/apps/gpt-auto-api",
-        "format": ["cjs"],
+        "format": [
+          "cjs"
+        ],
         "bundle": false,
         "main": "apps/gpt-auto-api/src/main.ts",
         "tsConfig": "apps/gpt-auto-api/tsconfig.app.json",
-        "assets": ["apps/gpt-auto-api/src/assets"],
+        "assets": [
+          "apps/gpt-auto-api/src/assets"
+        ],
         "generatePackageJson": true,
         "esbuildOptions": {
           "entryNames": "[dir]/[name]",
@@ -38,10 +44,11 @@
         }
       }
     },
-
     "prune-lockfile": {
       "executor": "@nx/js:prune-lockfile",
-      "dependsOn": ["build"],
+      "dependsOn": [
+        "build"
+      ],
       "cache": true,
       "outputs": [
         "{workspaceRoot}/dist/apps/gpt-auto-api/package.json",
@@ -51,10 +58,11 @@
         "buildTarget": "build"
       }
     },
-
     "copy-workspace-modules": {
       "executor": "@nx/js:copy-workspace-modules",
-      "dependsOn": ["build"],
+      "dependsOn": [
+        "build"
+      ],
       "cache": true,
       "outputs": [
         "{workspaceRoot}/dist/apps/gpt-auto-api/workspace_modules"
@@ -63,7 +71,6 @@
         "buildTarget": "build"
       }
     },
-
     "prune": {
       "executor": "nx:noop",
       "dependsOn": [
@@ -71,14 +78,13 @@
         "copy-workspace-modules"
       ]
     },
-
     "serve": {
       "executor": "@nx/js:node",
       "continuous": true,
       "defaultConfiguration": "development",
       "options": {
         "buildTarget": "gpt-auto-api:build",
-        "runBuildTargetDependencies": false
+        "runBuildTargetDependencies": true
       },
       "configurations": {
         "development": {

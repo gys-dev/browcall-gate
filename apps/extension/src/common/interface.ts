@@ -10,3 +10,9 @@ export type StartPayload = {
 };
 
 export type ConnectState = 'connected' | 'connecting' | 'error' | 'disconnected'
+
+export interface SessionPayload  {
+    apiPort: number
+    socketPort: number
+    tabId: number
+}

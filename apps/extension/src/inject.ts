@@ -1,11 +1,11 @@
 import { showOverlay, updateStatus } from "./common/dom";
-import { Host } from "./common/interface";
+import { ConnectState, Host, SessionPayload } from "./common/interface";
 import { getApp, log } from "./common/utils";
 import { WSSingleton } from "./common/ws-singleton";
 import { ContentAppAbstract } from "./content/content.abstract";
 import { OpenAIContentApp } from "./content/openai";
 import { PerplexityContentApp } from "./content/perplexity/index";
-import { CommuteEvent, ConnectWindowEnum } from "@lib/interfaces";
+import { CommuteEvent, ConnectWindowEnum } from "interfaces";
 
 
 /* -------------------- bootstrap (content-script safe) -------------------- */
@@ -32,6 +32,8 @@ switch (appName) {
         log('No matching content app for hostname:', hostname);
         break;
 }
+
+persistConnect();
 
 /* -------------------- handle status event (content-script safe) -------------------- */
 
@@ -60,63 +62,79 @@ const onMessageSessionReceive = (eventMessage: MessageEvent, payload: Record<str
     }
 }
 
-chrome.runtime.onMessage.addListener((event) => {
+function connect(connectProps: SessionPayload) {
+    const { tabId, socketPort, apiPort } = connectProps;
 
+    WSSingleton.setSingletonPort(socketPort);
+    websocket = WSSingleton.getSocket();
+    WSSingleton.onOpen((event) => {
+        log("On connect event", event)
+        app.init()
+        showOverlay(true)
+
+        log("send event", websocket)
+        websocket.send(JSON.stringify({
+            type: CommuteEvent.Register,
+            data: tabId
+        }))
+
+        chrome.storage.sync.set({ 'socketStatus': 'connected' })
+
+        updateStatus(
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            document.querySelector("#contentAppStatus")!,
+            apiPort,
+            socketPort,
+            'connected'
+        )
+    })
+
+
+    WSSingleton.onMessage((event) => onMessageSessionReceive(event, {
+        apiPort,
+        socketPort,
+        tabId
+    }))
+
+    WSSingleton.onError((event) => {
+        log("On connect error", event)
+    })
+}
+
+async function persistConnect() {
+    const tabId = await chrome.runtime.sendMessage({ source: ConnectWindowEnum.GetTabId })
+    if (!tabId) {
+        throw Error("Could not get tab info")
+    }
+
+    const session = await chrome.runtime.sendMessage({
+        source: ConnectWindowEnum.GetSession,
+        payload: {
+            tabId
+        }
+    })
+
+    log("persist connect", session)
+
+    if (session) {
+        connect(session)
+    }
+}
+
+chrome.runtime.onMessage.addListener((event) => {
     switch (event.source) {
         case ConnectWindowEnum.SetPorts: {
-            const { tabId, socketPort, apiPort } = event.payload;
+            // const { tabId, socketPort, apiPort } = event.payload;
 
-            WSSingleton.setSingletonPort(socketPort);
-            websocket = WSSingleton.getSocket();
-            log("connect again")
-            WSSingleton.onOpen((event) => {
-                log("On connect event", event)
-                app.init()
-                showOverlay(true)
+            log("Connect window!!")
+            connect(event.payload)
 
-                log("send event", websocket)
-                websocket.send(JSON.stringify({
-                    type: CommuteEvent.Register,
-                    data: tabId
-                }))
-
-                chrome.storage.sync.set({ 'socketStatus': 'connected' })
-
-                updateStatus(
-                    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                    document.querySelector("#contentAppStatus")!,
-                    apiPort,
-                    socketPort,
-                    'connected'
-                )
-            })
-
-
-            WSSingleton.onMessage((event) => onMessageSessionReceive(event, {
-                apiPort,
-                socketPort,
-                tabId
-            }))
-
-            WSSingleton.onError((event) => {
-                log("On connect error", event)
-
-                // showOverlay(true)
-
-                // updateStatus(
-                //     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                //     document.querySelector("#contentAppStatus")!,
-                //     apiPort,
-                //     socketPort,
-                //     'error'
-                // )
-            })
             break;
         }
 
-        case ConnectWindowEnum.Disconnect: {
+        case ConnectWindowEnum.Disconnected: {
+            log("disconnect requirement")
             showOverlay(false)
-            chrome.storage.sync.set({ 'socketStatus': 'disconnected' })
             updateStatus(
                 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 document.querySelector("#contentAppStatus")!,

@@ -1,13 +1,57 @@
-import { ConnectWindowEnum } from "@lib/interfaces";
+import { ConnectWindowEnum } from "interfaces";
+import { SessionPayload } from "./common/interface";
 
-console.log("hi")
-chrome.runtime.onMessage.addListener((event) => {
+const activeSession = new Map<string, any>();
+
+chrome.runtime.onMessage.addListener((event, sender, callback) => {
     switch (event.source) {
         case ConnectWindowEnum.NewSession: {
-            const { apiPort, tabId, socketPort} = event.payload;
+            const { apiPort, tabId, socketPort } = event.payload;
+            if (!apiPort || !socketPort) {
+                return
+            }
 
-            console.log("EVENT REQUEST: ", event.payload)
+            activeSession.set(tabId, event.payload)
             break;
         }
+        case ConnectWindowEnum.GetSession: {
+            const { tabId } = event.payload;
+            const session = activeSession.get(tabId);
+            if (session) {
+                callback(session)
+            } else {
+                callback(null)
+            }
+            break;
+        }
+        case ConnectWindowEnum.Disconnect: {
+            const { tabId } = event.payload;
+            activeSession.delete(tabId)
+            chrome.runtime.sendMessage({ payload: { tabId }, source: ConnectWindowEnum.Disconnected })
+            chrome.tabs.sendMessage(tabId, {    
+                payload:  tabId, 
+                source: ConnectWindowEnum.Disconnected
+            })
+            break;
+        }
+        case ConnectWindowEnum.GetTabId: {
+            callback(sender.tab?.id)
+            break;
+        }
+
+        case ConnectWindowEnum.PollingSession: {
+            const { socketPort } = event.payload;
+            const tabId = sender.tab?.id
+
+            console.log(socketPort, tabId)
+            
+            // TODO: from port, find all tab in idle -> Manage in tab idle later
+            // then return information to permit to start
+            // current default true, feature implement later
+
+            callback(true)
+            break;
+        }
+        
     }
 })

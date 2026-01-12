@@ -10,15 +10,27 @@
     "importHelpers": true,
     "target": "es2015",
     "module": "esnext",
-    "lib": ["es2020", "dom"],
+    "lib": [
+      "es2020",
+      "dom"
+    ],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "events": ["libs/events/src/index.ts"],
-      "lib": ["lib/src/index.ts"],
-      "interfaces": ["lib/interfaces/src/index.ts"]
+      "events": [
+        "libs/events/src/index.ts"
+      ],
+      "interfaces": [
+        "packages/interfaces/src/index.ts"
+      ],
+      "interfaces/*": [
+        "packages/interfaces/src/*"
+      ]
     }
   },
-  "exclude": ["node_modules", "tmp"]
+  "exclude": [
+    "node_modules",
+    "tmp"
+  ]
 }

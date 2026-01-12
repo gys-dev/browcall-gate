@@ -1,5 +1,5 @@
 import WebSocket, { WebSocketServer as WSServer } from 'ws';
-import { CommuteEvent  } from "@lib/interfaces"
+import { CommuteEvent } from "interfaces"
 
 const WS_PORT = process.env.WS_PORT ? Number(process.env.WS_PORT) : 8765;
 
@@ -52,10 +52,10 @@ export class WebSocketServer {
         message.toString('utf8')
       ) as WSResponse;
 
-      switch(jsonObject.type) {
+      switch (jsonObject.type) {
         case CommuteEvent.Register: {
           console.log("request register", jsonObject)
-          socket.send(JSON.stringify({type: CommuteEvent.RegisterResponse  }))
+          socket.send(JSON.stringify({ type: CommuteEvent.RegisterResponse }))
           break;
         }
 

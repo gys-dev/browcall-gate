@@ -1,0 +1,37 @@
+{
+  "name": "gpt-inner-call",
+  "id": "gpt-inner-call",
+  "createdAt": "2026-01-12T13:59:15.648Z",
+  "settings": {
+    "defaultPriority": "medium",
+    "statuses": [
+      "todo",
+      "in-progress",
+      "in-review",
+      "done",
+      "blocked",
+      "on-hold",
+      "urgent"
+    ],
+    "statusColors": {
+      "todo": "gray",
+      "in-progress": "blue",
+      "in-review": "purple",
+      "done": "green",
+      "blocked": "red",
+      "on-hold": "yellow",
+      "urgent": "orange"
+    },
+    "visibleColumns": [
+      "todo",
+      "in-progress",
+      "blocked",
+      "done",
+      "in-review"
+    ],
+    "defaultLabels": [],
+    "timeFormat": "24h",
+    "gitTrackingMode": "git-tracked",
+    "serverPort": 6420
+  }
+}

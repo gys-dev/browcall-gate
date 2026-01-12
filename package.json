@@ -6,7 +6,7 @@
   "private": true,
   "workspaces": [
     "apps/*",
-    "@lib/*"
+    "packages/*"
   ],
   "scripts": {
     "serve": "nx serve gpt-auto-api",

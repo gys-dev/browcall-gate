@@ -7,6 +7,7 @@ import { Decoder } from '../../common/html-decoder/base';
 import { DecoderPlain } from '../../common/html-decoder/decoder-plain';
 import { DecoderMarkdown } from '../../common/html-decoder/decoder-markdown';
 import { DecoderJson } from '../../common/html-decoder/decoder-json';
+import { ConnectWindowEnum } from 'interfaces/src';
 
 export class OpenAIContentApp extends ContentAppAbstract {
 
@@ -161,11 +162,17 @@ export class OpenAIContentApp extends ContentAppAbstract {
         WSSingleton.onClose(() => {
             log('WS closed – reconnecting');
         });
-        WSSingleton.onMessage(e => {
+        WSSingleton.onMessage(async e => {
             if (typeof e.data !== 'string') return;
             try {
-                const data = JSON.parse(e.data) as StartPayload;
-                this.start(data);
+                // dump config for implement later
+                const allowToStart = await chrome.runtime.sendMessage({ source: ConnectWindowEnum.PollingSession, payload: {socketPort: 0} });
+                if (allowToStart) {
+                    const data = JSON.parse(e.data) as StartPayload;
+                    this.start(data);
+                } else {
+                    console.warn("App is running, please wait until tab perform the task done")
+                }
             } catch (err) {
                 log('Invalid WS message', err);
             }
