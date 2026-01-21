@@ -51,8 +51,8 @@ The project is organized as a monorepo using [Nx](https://nx.dev/):
 
 1.  **Clone the repository:**
     ```bash
-    git clone https://github.com/your-repo/gpt-inner-call.git
-    cd gpt-inner-call
+    git clone https://github.com/gys-dev/browcall-gate.git
+    cd browcall-gate
     ```
 
 2.  **Install dependencies:**
