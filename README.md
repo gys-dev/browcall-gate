@@ -37,7 +37,6 @@ The project is organized as a monorepo using [Nx](https://nx.dev/):
 - **Monorepo Management**: [Nx](https://nx.dev/)
 - **Backend**: Node.js, Express, WebSocket (`ws`)
 - **Frontend/Extension**: React, TypeScript, Vite
-- **Automation**: Playwright (for headless support/testing)
 - **Integration**: n8n
 
 ## 🎬 Getting Started
