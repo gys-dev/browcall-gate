@@ -29,7 +29,7 @@ The project is organized as a monorepo using [Nx](https://nx.dev/):
 - **[GPT Auto API](./apps/gpt-auto-api)**: A Node.js backend server that exposes an OpenAI-compatible `/v1/chat/completions` endpoint. It communicates with the browser extension to execute requests and retrieve responses.
 
 ### 📦 Packages
-- **[n8n-nodes-browcall-gate](./packages/n8n-nodes-browcall-gate)**: Custom n8n nodes to integrate Browcall directly into your automation workflows.
+- **[n8n-nodes-browcall-gate](https://github.com/gys-dev/n8n-nodes-browcall-gate)**: Custom n8n nodes to integrate Browcall directly into your automation workflows.
 - **[Interfaces](./packages/interfaces)**: Shared TypeScript definitions and interfaces used across the monorepo.
 
 ## 🛠 Tech Stack
