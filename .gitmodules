@@ -1,0 +1,3 @@
+[submodule "packages/n8n-nodes-browcall-gate"]
+	path = packages/n8n-nodes-browcall-gate
+	url = https://github.com/gys-dev/n8n-nodes-browcall-gate.git
