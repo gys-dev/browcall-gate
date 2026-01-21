@@ -1,9 +1,10 @@
 import { Router, Request, Response } from 'express';
-import { websocketServerInstance } from '../../services/websocket';
+import { getWebsocketServerInstance } from '../../services/websocket';
+import { CommuteEvent } from "@interfaces"
+import { setupSSEResponse, writeSSEData, endSSEResponse } from '../../utils/sse';
+import { validateChatCompletions } from '../../middlewares/validation';
 
 const chatRouter = Router();
-
-
 
 interface MessageContentText {
   type: 'text';
@@ -18,21 +19,15 @@ interface Message {
   content: MessageContent[] | string;
 }
 
-chatRouter.post('/completions', async (req: Request, res: Response) => {
-  const { messages, outputFormat, stream, newChat = true } = req.body as {
+chatRouter.post('/completions', validateChatCompletions, async (req: Request, res: Response) => {
+  const { messages, outputFormat, stream } = req.body as {
     messages: Message[];
     outputFormat: string;
     stream?: boolean;
-    newChat?: boolean;
   };
 
   if (stream) {
-    res.setHeader('Content-Type', 'text/event-stream');
-    res.setHeader('Cache-Control', 'no-cache');
-    res.setHeader('Connection', 'keep-alive');
-    if (typeof (res as Response & { flushHeaders?: () => void }).flushHeaders === 'function') {
-      (res as Response & { flushHeaders: () => void }).flushHeaders();
-    }
+    setupSSEResponse(res);
   }
 
   const processedMessages = messages.map((msg) => {
@@ -46,19 +41,24 @@ chatRouter.post('/completions', async (req: Request, res: Response) => {
     return msg.content;
   });
 
-  const requestPayload = `
-Now you must play the role of system and answer the user.
-
-${JSON.stringify(processedMessages, null, 2)}
-
-Your answer:
-`;
+  const requestPayload = `${processedMessages}`;
 
   let lastResponse = '';
+  let responseFinished = false;
 
-  websocketServerInstance.sendRequest(
-    { text: requestPayload, outputFormat, newChat },
+  const socketPayload = {
+    type: CommuteEvent.Chat,
+    data: {
+      text: requestPayload,
+      outputFormat,
+    }
+  }
+
+  getWebsocketServerInstance().sendRequest(
+    socketPayload,
     (type, response) => {
+      if (responseFinished) return;
+
       try {
         response = response.trim();
 
@@ -73,43 +73,38 @@ Your answer:
           try {
             renderedContent = JSON.parse(response);
           } catch {
-            renderedContent = { content: response };
+            renderedContent = { text: response };
           }
-        } else if (outputFormat === 'plain') {
-          renderedContent = response;
-        } else if (outputFormat === 'markdown') {
-          renderedContent = response; // If markdown, just pass as string (client will render)
         } else {
-          renderedContent = response;
+          renderedContent = { text: response };
         }
 
         const result = {
-          choices: [
-            {
-              message: { content: renderedContent },
-              delta: { content: delta },
-            },
-          ],
+          data: renderedContent,
         };
 
         lastResponse = response;
 
         if (type === 'stop') {
+          responseFinished = true;
           if (stream) {
-            (res as Response & NodeJS.WritableStream).write(`id: ${Date.now()}\n`);
-            (res as Response & NodeJS.WritableStream).write(`event: event\n`);
-            (res as Response & NodeJS.WritableStream).write(`data: [DONE]\n\n`);
-            (res as Response & NodeJS.WritableStream).end();
+            endSSEResponse(res);
           } else {
             res.json(result);
           }
         } else if (stream) {
-          (res as Response & NodeJS.WritableStream).write(`id: ${Date.now()}\n`);
-          (res as Response & NodeJS.WritableStream).write(`event: event\n`);
-          (res as Response & NodeJS.WritableStream).write(`data: ${JSON.stringify(result)}\n\n`);
+          writeSSEData(res, result);
         }
       } catch (err) {
-        console.error(err);
+        console.error('Error in WS callback:', err);
+        if (!responseFinished) {
+          responseFinished = true;
+          if (stream) {
+            endSSEResponse(res);
+          } else {
+            res.status(500).json({ error: 'Internal server error' });
+          }
+        }
       }
     }
   );

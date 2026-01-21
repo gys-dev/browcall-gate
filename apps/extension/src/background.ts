@@ -1,5 +1,4 @@
-import { ConnectWindowEnum } from "interfaces";
-import { SessionPayload } from "./common/interface";
+import { ConnectWindowEnum } from "@interfaces";
 
 const activeSession = new Map<string, any>();
 
@@ -28,8 +27,8 @@ chrome.runtime.onMessage.addListener((event, sender, callback) => {
             const { tabId } = event.payload;
             activeSession.delete(tabId)
             chrome.runtime.sendMessage({ payload: { tabId }, source: ConnectWindowEnum.Disconnected })
-            chrome.tabs.sendMessage(tabId, {    
-                payload:  tabId, 
+            chrome.tabs.sendMessage(tabId, {
+                payload: tabId,
                 source: ConnectWindowEnum.Disconnected
             })
             break;
@@ -44,14 +43,14 @@ chrome.runtime.onMessage.addListener((event, sender, callback) => {
             const tabId = sender.tab?.id
 
             console.log(socketPort, tabId)
-            
-            // TODO: from port, find all tab in idle -> Manage in tab idle later
+
+            // TODO: From port, find all tab in idle -> Manage in tab idle later
             // then return information to permit to start
             // current default true, feature implement later
 
             callback(true)
             break;
         }
-        
+
     }
 })

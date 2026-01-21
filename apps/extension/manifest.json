@@ -1,22 +1,25 @@
 {
   "manifest_version": 3,
-  "name": "__MSG_ext_name__",
-  "description": "__MSG_ext_description__",
+  "name": "Browcall Extension",
+  "description": "A supportive extension for execute command from Browcall",
   "version": "1.15.120",
   "author": "Dhy Solutions Team",
-  "default_locale": "en",
-  "short_name": "__MSG_ext_short_name__",
+  "short_name": "Browcall Extension",
   "icons": {
+    "16": "img/notepad_16.png",
+    "32": "img/notepad_32.png",
     "48": "img/notepad_48.png",
     "128": "img/notepad_128.png"
   },
   "action": {
     "default_icon": {
-      "24": "img/a_6.png",
+      "16": "img/notepad_16.png",
+      "24": "img/notepad_24.png",
+      "32": "img/notepad_32.png",
       "48": "img/notepad_48.png",
       "128": "img/notepad_128.png"
     },
-    "default_title": "__MSG_ext_short_name__",
+    "default_title": "Browcall Extension",
     "default_popup": "index.html"
   },
   "background": {
@@ -53,10 +56,6 @@
     }
   ],
   "host_permissions": [
-    "https://apis.google.com/*",
-    "https://ssl.google-analytics.com/*",
-    "https://www.googletagmanager.com/*",
-    "https://www.gstatic.com/*",
-    "https://api.hostip.info/*"
+    "https://apis.google.com/*"
   ]
 }

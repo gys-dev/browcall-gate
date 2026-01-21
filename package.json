@@ -10,6 +10,8 @@
   ],
   "scripts": {
     "serve": "nx serve gpt-auto-api",
+    "start:api": "node dist/apps/gpt-auto-api/main.js",
+    "start:api:dev": "ts-node apps/gpt-auto-api/src/main.ts",
     "build": "nx build gpt-auto-api",
     "prune": "nx run gpt-auto-api:prune",
     "lint": "nx lint gpt-auto-api",

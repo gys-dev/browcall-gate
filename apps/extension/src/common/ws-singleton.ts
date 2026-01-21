@@ -1,6 +1,8 @@
 // src/content/ws-singleton.ts
 // Singleton WebSocket manager class for sharing and extending socket methods
 
+import { WSPayload } from "@interfaces";
+
 export class WSSingleton {
   private static WS_URL = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_WS_URL
     ? import.meta.env.VITE_WS_URL
@@ -37,7 +39,7 @@ export class WSSingleton {
     this.getSocket().addEventListener('error', cb);
   }
 
-  static send(data: unknown) {
+  static send<T>(data: WSPayload<T>) {
     const socket = this.getSocket();
     if (socket.readyState === WebSocket.OPEN) {
       socket.send(JSON.stringify(data));

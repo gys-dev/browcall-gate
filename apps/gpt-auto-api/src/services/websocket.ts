@@ -1,29 +1,28 @@
 import WebSocket, { WebSocketServer as WSServer } from 'ws';
-import { CommuteEvent } from "interfaces"
-
-const WS_PORT = process.env.WS_PORT ? Number(process.env.WS_PORT) : 8765;
+import { CommuteEvent, WSPayload } from "@interfaces"
 
 interface WSRequest {
   text: string;
   outputFormat: string;
-  newChat: boolean;
 }
 
-interface WSResponse {
-  type: 'answer' | 'stop' | 'register';
+interface WSChatResponse {
   text: string;
 }
 
-type WSCallback = (type: WSResponse['type'], response: string) => void;
+type MessageType = 'answer' | 'stop' | 'register';
+
+type WSCallback = (type: MessageType, response: string) => void;
 
 
 export class WebSocketServer {
   private server: WSServer;
   private connectedSocket: WebSocket | null = null;
-  private text = "";
+  private finalText = "";
 
   constructor() {
-    this.server = new WSServer({ port: WS_PORT });
+    const port = process.env.WS_PORT ? Number(process.env.WS_PORT) : 8765;
+    this.server = new WSServer({ port });
     this.initialize();
   }
 
@@ -34,7 +33,7 @@ export class WebSocketServer {
 
       this.listenCommuteEvent(socket)
 
-      console.log('WebSocket server is running');
+      console.log(`WebSocket server is running at ws://localhost:${(this.server.address() as any).port}`);
     });
 
   }
@@ -50,7 +49,7 @@ export class WebSocketServer {
     socket.on('message', (message) => {
       const jsonObject = JSON.parse(
         message.toString('utf8')
-      ) as WSResponse;
+      ) as WSPayload<WSRequest>;
 
       switch (jsonObject.type) {
         case CommuteEvent.Register: {
@@ -66,29 +65,45 @@ export class WebSocketServer {
 
   }
 
-  listenMessageCallBack = (message: WebSocket.RawData, callback: WSCallback) => {
-    const jsonObject = JSON.parse(
-      message.toString('utf8')
-    ) as WSResponse;
+  listenMessageCallBack = (message: WebSocket.RawData, callback: WSCallback, currentListener: (message: WebSocket.RawData) => void) => {
+    try {
+      const jsonObject = JSON.parse(
+        message.toString('utf8')
+      ) as WSPayload<WSChatResponse>;
 
-    if (jsonObject.type === 'stop') {
-      this.connectedSocket?.off('message', callback);
-      callback('stop', this.text);
-    } else if (jsonObject.type === 'answer') {
-      this.text = jsonObject.text;
-      callback('answer', this.text);
+      if (jsonObject.type === 'stop') {
+        this.connectedSocket?.off('message', currentListener);
+        callback('stop', this.finalText);
+      } else if (jsonObject.type === 'answer') {
+        this.finalText = jsonObject.data.text;
+        callback('answer', this.finalText);
+      }
+    } catch (e) {
+      console.error('Error parsing WS message:', e);
     }
   };
 
-  public sendRequest(request: WSRequest, callback: WSCallback): void {
+  public sendRequest(request: WSPayload<WSRequest>, callback: WSCallback): void {
     if (!this.connectedSocket) {
       callback('stop', 'api error');
       return;
     }
 
+    console.log('Sending request to browser:', request.type);
     this.connectedSocket.send(JSON.stringify(request));
-    this.connectedSocket.on('message', (message: WebSocket.RawData) => this.listenMessageCallBack(message, callback));
+
+    const listener = (message: WebSocket.RawData) => {
+      this.listenMessageCallBack(message, callback, listener);
+    };
+
+    this.connectedSocket.on('message', listener);
   }
 }
 
-export const websocketServerInstance = new WebSocketServer();
+let instance: WebSocketServer | null = null;
+export const getWebsocketServerInstance = () => {
+  if (!instance) {
+    instance = new WebSocketServer();
+  }
+  return instance;
+};

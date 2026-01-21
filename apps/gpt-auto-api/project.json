@@ -17,7 +17,7 @@
         "format": [
           "cjs"
         ],
-        "bundle": false,
+        "bundle": true,
         "main": "apps/gpt-auto-api/src/main.ts",
         "tsConfig": "apps/gpt-auto-api/tsconfig.app.json",
         "assets": [
@@ -25,7 +25,7 @@
         ],
         "generatePackageJson": true,
         "esbuildOptions": {
-          "entryNames": "[dir]/[name]",
+          "entryNames": "[name]",
           "sourcemap": true,
           "outExtension": {
             ".js": ".js"

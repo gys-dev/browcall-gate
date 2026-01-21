@@ -9,7 +9,7 @@ const path = require('path');
 const fs = require('fs');
 const originalResolveFilename = Module._resolveFilename;
 const distPath = __dirname;
-const manifest = [{"module":"interfaces/*","pattern":"packages/interfaces/src/*"},{"module":"events","exactMatch":"libs/events/src/index.js","pattern":"libs/events/src/index.ts"},{"module":"interfaces","exactMatch":"packages/interfaces/src/index.js","pattern":"packages/interfaces/src/index.ts"}];
+const manifest = [{"module":"@interfaces/*","pattern":"packages/interfaces/src/*"},{"module":"events","exactMatch":"libs/events/src/index.js","pattern":"libs/events/src/index.ts"},{"module":"@interfaces","exactMatch":"packages/interfaces/src/index.js","pattern":"packages/interfaces/src/index.ts"}];
 
 Module._resolveFilename = function(request, parent) {
   let found;

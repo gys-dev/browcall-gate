@@ -1,0 +1,20 @@
+{
+    "name": "@browcall/gpt-auto-api",
+    "version": "0.1.0",
+    "description": "Backend API for gpt-inner-call",
+    "main": "main.js",
+    "bin": {
+        "gpt-auto-api": "main.js"
+    },
+    "scripts": {
+        "start": "node main.js",
+        "dev": "nx serve gpt-auto-api"
+    },
+    "keywords": [
+        "gpt",
+        "api",
+        "automation"
+    ],
+    "author": "Tran Duc Y",
+    "license": "MIT"
+}

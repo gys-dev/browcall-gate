@@ -7,7 +7,7 @@ import { Decoder } from '../../common/html-decoder/base';
 import { DecoderPlain } from '../../common/html-decoder/decoder-plain';
 import { DecoderMarkdown } from '../../common/html-decoder/decoder-markdown';
 import { DecoderJson } from '../../common/html-decoder/decoder-json';
-import { ConnectWindowEnum } from 'interfaces/src';
+import { ConnectWindowEnum, WSPayload } from 'interfaces';
 
 export class OpenAIContentApp extends ContentAppAbstract {
 
@@ -131,9 +131,10 @@ export class OpenAIContentApp extends ContentAppAbstract {
                 lastLen = data.text.length;
                 this.send({
                     type: 'answer',
-                    text: data.text,
-                    citations: data.citations,
-                    complete: false,
+                    data: {
+                        text: data.text,
+                        complete: false,
+                    }
                 });
             }
 
@@ -142,9 +143,10 @@ export class OpenAIContentApp extends ContentAppAbstract {
                 const data = await this.extractResponseText();
                 this.send({
                     type: 'answer',
-                    text: data.text,
-                    citations: data.citations,
-                    complete: true,
+                    data: {
+                        text: data.text,
+                        complete: true,
+                    }
                 });
 
                 this.send({ type: 'stop' });
@@ -166,10 +168,10 @@ export class OpenAIContentApp extends ContentAppAbstract {
             if (typeof e.data !== 'string') return;
             try {
                 // dump config for implement later
-                const allowToStart = await chrome.runtime.sendMessage({ source: ConnectWindowEnum.PollingSession, payload: {socketPort: 0} });
+                const allowToStart = await chrome.runtime.sendMessage({ source: ConnectWindowEnum.PollingSession, payload: { socketPort: 0 } });
                 if (allowToStart) {
-                    const data = JSON.parse(e.data) as StartPayload;
-                    this.start(data);
+                    const wsPayload = JSON.parse(e.data) as WSPayload<StartPayload>;
+                    this.start(wsPayload.data!);
                 } else {
                     console.warn("App is running, please wait until tab perform the task done")
                 }

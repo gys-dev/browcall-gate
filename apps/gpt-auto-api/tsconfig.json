@@ -8,7 +8,6 @@
     }
   ],
   "compilerOptions": {
-    "esModuleInterop": true,
-    "baseUrl": "."
-  },
+    "esModuleInterop": true
+  }
 }

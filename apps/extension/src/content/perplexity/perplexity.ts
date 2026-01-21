@@ -4,6 +4,7 @@ import { WSSingleton } from "../../common/ws-singleton";
 import { Citation } from "../perplexity/interface";
 import { ContentAppAbstract } from "../content.abstract";
 import { StartPayload } from '../../common/interface';
+import { WSPayload } from "@interfaces";
 
 export class PerplexityContentApp extends ContentAppAbstract {
     static SELECTORS = {
@@ -101,8 +102,8 @@ export class PerplexityContentApp extends ContentAppAbstract {
         WSSingleton.onMessage(e => {
             if (typeof e.data !== 'string') return;
             try {
-                const data = JSON.parse(e.data) as StartPayload;
-                this.start(data);
+                const wsPayload = JSON.parse(e.data) as WSPayload<StartPayload>;
+                this.start(wsPayload.data!);
             } catch (err) {
                 log('Invalid WS message', err);
             }
@@ -184,9 +185,11 @@ export class PerplexityContentApp extends ContentAppAbstract {
                 lastLen = data.text.length;
                 this.send({
                     type: 'answer',
-                    text: data.text,
-                    citations: data.citations,
-                    complete: false,
+                    data: {
+                        text: data.text,
+                        citations: data.citations,
+                        complete: false,
+                    }
                 });
             }
 
@@ -196,9 +199,11 @@ export class PerplexityContentApp extends ContentAppAbstract {
 
                 this.send({
                     type: 'answer',
-                    text: data.text,
-                    citations: data.citations,
-                    complete: true,
+                    data: {
+                        text: data.text,
+                        citations: data.citations,
+                        complete: true,
+                    }
                 });
 
                 if (!this.stopped) {
@@ -207,9 +212,5 @@ export class PerplexityContentApp extends ContentAppAbstract {
                 }
             }
         });
-    }
-
-    protected send(payload: unknown) {
-        WSSingleton.send(payload);
     }
 }

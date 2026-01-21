@@ -1,5 +1,6 @@
 /// <reference types="chrome"/>
 
+import { WSPayload } from '@interfaces';
 import { log } from '../common/utils';
 
 export abstract class ContentAppAbstract {
@@ -117,7 +118,7 @@ export abstract class ContentAppAbstract {
 		});
 	}
 
-	protected send(payload: unknown) {
+	protected send<T>(payload: WSPayload<T>) {
 		if (this.socket && this.socket.readyState === WebSocket.OPEN) {
 			this.socket.send(JSON.stringify(payload));
 		}
