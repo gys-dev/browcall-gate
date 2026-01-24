@@ -1,6 +1,6 @@
 /// <reference types="chrome"/>
 
-import { WSPayload } from '@interfaces';
+import { WSPayload } from 'interfaces';
 import { log } from '../common/utils';
 
 export abstract class ContentAppAbstract {

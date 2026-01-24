@@ -1,5 +1,5 @@
 module.exports = {
-  displayName: '@interfaces',
+  displayName: 'interfaces',
   preset: '../../jest.preset.js',
   testEnvironment: 'node',
   transform: {

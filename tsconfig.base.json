@@ -21,10 +21,10 @@
       "events": [
         "libs/events/src/index.ts"
       ],
-      "@interfaces": [
+      "interfaces": [
         "packages/interfaces/src/index.ts"
       ],
-      "@interfaces/*": [
+      "interfaces/*": [
         "packages/interfaces/src/*"
       ]
     }

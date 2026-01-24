@@ -4,7 +4,7 @@ import { WSSingleton } from "../../common/ws-singleton";
 import { Citation } from "../perplexity/interface";
 import { ContentAppAbstract } from "../content.abstract";
 import { StartPayload } from '../../common/interface';
-import { WSPayload } from "@interfaces";
+import { WSPayload } from "interfaces";
 
 export class PerplexityContentApp extends ContentAppAbstract {
     static SELECTORS = {

@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { getWebsocketServerInstance } from '../../services/websocket';
-import { CommuteEvent } from "@interfaces"
+import { CommuteEvent } from "interfaces"
 import { setupSSEResponse, writeSSEData, endSSEResponse } from '../../utils/sse';
 import { validateChatCompletions } from '../../middlewares/validation';
 

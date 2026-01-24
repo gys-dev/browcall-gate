@@ -5,7 +5,7 @@ import { WSSingleton } from "./common/ws-singleton";
 import { ContentAppAbstract } from "./content/content.abstract";
 import { OpenAIContentApp } from "./content/openai";
 import { PerplexityContentApp } from "./content/perplexity/index";
-import { CommuteEvent, ConnectWindowEnum } from "@interfaces";
+import { CommuteEvent, ConnectWindowEnum } from "interfaces";
 
 
 /* -------------------- bootstrap (content-script safe) -------------------- */

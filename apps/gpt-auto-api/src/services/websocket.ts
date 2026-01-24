@@ -1,5 +1,5 @@
 import WebSocket, { WebSocketServer as WSServer } from 'ws';
-import { CommuteEvent, WSPayload } from "@interfaces"
+import { CommuteEvent, WSPayload } from "interfaces"
 
 interface WSRequest {
   text: string;

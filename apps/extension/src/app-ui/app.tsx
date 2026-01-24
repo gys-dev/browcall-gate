@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Disconnect } from "./components/Disconnect";
 import { PortSettingsForm } from "./components/PortSetting";
-import { ConnectWindowEnum } from "@interfaces"
+import { ConnectWindowEnum } from "interfaces"
 import { useSession } from "./hooks/useSession";
 import { useEventWindow } from "./hooks/useEventWindow";
 import { UnSupportPage } from "./components/UnsuportPage";

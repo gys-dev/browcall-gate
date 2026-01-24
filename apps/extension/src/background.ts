@@ -1,4 +1,4 @@
-import { ConnectWindowEnum } from "@interfaces";
+import { ConnectWindowEnum } from "interfaces";
 
 const activeSession = new Map<string, any>();
 
