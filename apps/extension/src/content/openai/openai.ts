@@ -20,7 +20,7 @@ export class OpenAIContentApp extends ContentAppAbstract {
             composingBtn: '#composer-submit-button',
             composingState: '[data-testid="stop-button"]',
             lastNode: '[data-state="closed"]',
-            ignoreClasses: '.bg-token-sidebar-surface-primary > :first-child, .select-none.py-1',
+            ignoreClasses: '.bg-token-sidebar-surface-primary > :first-child, .select-none.py-1, .sticky.select-none ',
             agentBlockImage: '.agent-turn:nth-last-child(1) img'
             // Add more selectors as needed
         };
@@ -69,6 +69,7 @@ export class OpenAIContentApp extends ContentAppAbstract {
             }
             case 'json': {
                 const jsonDecoder = new DecoderJson();
+                log("Extracting JSON response from element:", filteredEl);
                 const text = await jsonDecoder.decode(filteredEl);
                 return { text, citations: [] };
             }
