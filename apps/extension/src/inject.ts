@@ -3,6 +3,7 @@ import { ConnectState, Host, SessionPayload } from "./common/interface";
 import { getApp, log } from "./common/utils";
 import { WSSingleton } from "./common/ws-singleton";
 import { ContentAppAbstract } from "./content/content.abstract";
+import { GeminiContentApp } from "./content/gemini/gemini";
 import { OpenAIContentApp } from "./content/openai";
 import { PerplexityContentApp } from "./content/perplexity/index";
 import { CommuteEvent, ConnectWindowEnum } from "interfaces";
@@ -28,6 +29,12 @@ switch (appName) {
         log('ChatGPT content app not implemented yet');
         app = new OpenAIContentApp();
         break;
+
+    case Host.Gemini:
+        log('Gemini content app not implemented yet');
+        app = new GeminiContentApp();
+        break;
+
     default:
         log('No matching content app for hostname:', hostname);
         break;

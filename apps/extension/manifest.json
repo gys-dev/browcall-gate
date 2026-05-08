@@ -39,7 +39,8 @@
       ],
       "matches": [
         "https://www.perplexity.ai/*",
-        "https://chatgpt.com/*"
+        "https://chatgpt.com/*",
+        "https://gemini.google.com/*"
       ]
     }
   ],
@@ -47,7 +48,8 @@
     {
       "matches": [
         "https://www.perplexity.ai/*",
-        "https://chatgpt.com/*"
+        "https://chatgpt.com/*",
+        "https://gemini.google.com/*"
       ],
       "js": [
         "inject.js"
