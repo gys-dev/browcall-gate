@@ -3,6 +3,8 @@ import { getWebsocketServerInstance } from '../../services/websocket';
 import { CommuteEvent } from "interfaces"
 import { setupSSEResponse, writeSSEData, endSSEResponse } from '../../utils/sse';
 import { validateChatCompletions } from '../../middlewares/validation';
+import { randomUUID } from 'crypto';
+
 
 const chatRouter = Router();
 
@@ -43,29 +45,38 @@ chatRouter.post('/completions', validateChatCompletions, async (req: Request, re
 
   const requestPayload = `${processedMessages}`;
 
-  let lastResponse = '';
   let responseFinished = false;
+  let lastResponse = '';
 
+  const uuid = randomUUID();
   const socketPayload = {
     type: CommuteEvent.Chat,
     data: {
+      uuid: uuid,
       text: requestPayload,
       outputFormat,
     }
   }
 
-  getWebsocketServerInstance().sendRequest(
-    socketPayload,
-    (type, response) => {
-      if (responseFinished) return;
+  const wsServer = getWebsocketServerInstance();
 
+  // If the HTTP client disconnects before we finish, cancel the in-flight
+  // request instead of letting it sit until the WS-side timeout fires —
+  // this keeps least-busy connection selection accurate for future requests.
+  const handleClientDisconnect = () => {
+    if (!responseFinished) {
+      responseFinished = true;
+      wsServer.cancelRequest(uuid);
+    }
+  };
+  res.on('close', handleClientDisconnect);
+
+  wsServer.sendRequest(
+    socketPayload,
+    (type, response, sourceUuid) => {
+      if (responseFinished) return;
       try {
         response = response.trim();
-
-        const delta =
-          lastResponse && response.startsWith(lastResponse)
-            ? response.slice(lastResponse.length)
-            : response;
 
         let renderedContent: any;
         if (outputFormat === 'json') {
@@ -85,8 +96,9 @@ chatRouter.post('/completions', validateChatCompletions, async (req: Request, re
 
         lastResponse = response;
 
-        if (type === 'stop') {
+        if (type === 'stop' && sourceUuid == uuid) {
           responseFinished = true;
+          res.off('close', handleClientDisconnect);
           if (stream) {
             endSSEResponse(res);
           } else {
@@ -99,6 +111,7 @@ chatRouter.post('/completions', validateChatCompletions, async (req: Request, re
         console.error('Error in WS callback:', err);
         if (!responseFinished) {
           responseFinished = true;
+          res.off('close', handleClientDisconnect);
           if (stream) {
             endSSEResponse(res);
           } else {

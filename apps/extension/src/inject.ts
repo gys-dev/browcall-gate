@@ -6,7 +6,8 @@ import { ContentAppAbstract } from "./content/content.abstract";
 import { GeminiContentApp } from "./content/gemini/gemini";
 import { OpenAIContentApp } from "./content/openai";
 import { PerplexityContentApp } from "./content/perplexity/index";
-import { CommuteEvent, ConnectWindowEnum } from "interfaces";
+import { CommuteEvent, ConnectWindowEnum, TabSession } from "interfaces";
+import { getTabSession } from "./common/window-session";
 
 
 /* -------------------- bootstrap (content-script safe) -------------------- */
@@ -59,9 +60,11 @@ const onMessageSessionReceive = (eventMessage: MessageEvent, payload: Record<str
                 payload: {
                     tabId,
                     apiPort,
-                    socketPort
+                    socketPort,
+
                 }
             })
+            app.retrieveInternalTabSession()
             break;
         }
         default:
@@ -84,6 +87,7 @@ function connect(connectProps: SessionPayload) {
             type: CommuteEvent.Register,
             data: tabId
         }))
+
 
         chrome.storage.sync.set({ 'socketStatus': 'connected' })
 
@@ -114,19 +118,9 @@ function connect(connectProps: SessionPayload) {
     })
 }
 
+
 async function persistConnect() {
-    const tabId = await chrome.runtime.sendMessage({ source: ConnectWindowEnum.GetTabId })
-    if (!tabId) {
-        throw Error("Could not get tab info")
-    }
-
-    const session = await chrome.runtime.sendMessage({
-        source: ConnectWindowEnum.GetSession,
-        payload: {
-            tabId
-        }
-    })
-
+    const session = await getTabSession()
     log("persist connect", session)
 
     if (session) {

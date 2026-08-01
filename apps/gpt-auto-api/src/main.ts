@@ -1,14 +1,14 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-import apiRoutes from './routes/index';
+import apiRoutes from './routes';
 import dotenv from 'dotenv';
 import { getWebsocketServerInstance } from './services/websocket';
 
 export function startServer(port?: number) {
   dotenv.config();
-  
+
   const actualPort = port || (process.env.HTTP_PORT ? Number(process.env.HTTP_PORT) : 8766);
-  
+
   // Ensure WebSocket server is initialized with correct env vars
   getWebsocketServerInstance();
 
@@ -84,7 +84,7 @@ Environment variables (can be set in .env):
 
 // Check if this module is being run directly
 const isMain = typeof require !== 'undefined' && (
-  require.main === module || 
+  require.main === module ||
   require.main?.filename === __filename ||
   process.argv[1] === __filename ||
   process.argv[1]?.endsWith('main.js') ||

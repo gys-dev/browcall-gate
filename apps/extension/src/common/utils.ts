@@ -1,4 +1,5 @@
 import { Host } from './interface';
+import { CommuteEvent, ConnectWindowEnum } from "interfaces";
 /**
  * Given a URL or hostname, returns the matching Host enum value based on prefix match.
  * @param urlOrHost string (full URL or hostname)
@@ -36,4 +37,14 @@ export function cleanText(text: string): string {
         /[\u200B\u200C\u200D\uFEFF]|[\u0000-\u001F\u007F-\u009F]/g,
         ''
     );
+}
+
+export const getSession = async (tabId: number): Promise<any> => {
+     const session = await chrome.runtime.sendMessage({
+        source: ConnectWindowEnum.GetSession,
+        payload: {
+            tabId
+        }
+    })
+    return session;
 }

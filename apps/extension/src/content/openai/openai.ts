@@ -104,7 +104,7 @@ export class OpenAIContentApp extends ContentAppAbstract {
     }
 
     async start(payload: StartPayload): Promise<void> {
-        const { text, outputFormat } = payload;
+        const { text, outputFormat, uuid } = payload;
         this.outputFormat = outputFormat || 'plain';
         const inputEl = document.querySelector<HTMLInputElement>(this.getSelectors().inputP);
 
@@ -153,33 +153,12 @@ export class OpenAIContentApp extends ContentAppAbstract {
                 this.send({ type: 'stop' });
                 this.lastText = data.text;
                 observerInstance?.disconnect();
-
+                this.finishTask();
             }
         });
     }
 
     protected connect() {
-        this.socket = WSSingleton.getSocket();
-        WSSingleton.onOpen(() => log('WS connected'));
-        WSSingleton.onError((err) => log('WS error', err));
-        WSSingleton.onClose(() => {
-            log('WS closed – reconnecting');
-        });
-        WSSingleton.onMessage(async e => {
-            if (typeof e.data !== 'string') return;
-            try {
-                // dump config for implement later
-                const allowToStart = await chrome.runtime.sendMessage({ source: ConnectWindowEnum.PollingSession, payload: { socketPort: 0 } });
-                if (allowToStart) {
-                    const wsPayload = JSON.parse(e.data) as WSPayload<StartPayload>;
-                    this.start(wsPayload.data!);
-                } else {
-                    console.warn("App is running, please wait until tab perform the task done")
-                }
-            } catch (err) {
-                log('Invalid WS message', err);
-            }
-        });
-
+        super.connect();
     }
 }

@@ -6,7 +6,16 @@ export enum ConnectWindowEnum {
 
     GetSession = 'GET_SESSION',
     GetTabId = "GET_TAB_ID",
-    PollingSession = 'POLLING_SESSION'
+    PollingSession = 'POLLING_SESSION',
+
+    Occupied = 'OCCUPIED',
+    Available = 'AVAILABLE',
+}
+
+export interface TabSession {
+    tabId: number;
+    apiPort: number;
+    socketPort: number;
 }
 
 

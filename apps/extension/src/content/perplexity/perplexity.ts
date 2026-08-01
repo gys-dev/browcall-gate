@@ -92,24 +92,8 @@ export class PerplexityContentApp extends ContentAppAbstract {
 
 
     connect() {
-        this.socket = WSSingleton.getSocket();
-
-        WSSingleton.onOpen(() => log('WS connected'));
-        WSSingleton.onError((err) => log('WS error', err));
-        WSSingleton.onClose(() => {
-            log('WS closed – reconnecting');
-        });
-        WSSingleton.onMessage(e => {
-            if (typeof e.data !== 'string') return;
-            try {
-                const wsPayload = JSON.parse(e.data) as WSPayload<StartPayload>;
-                this.start(wsPayload.data!);
-            } catch (err) {
-                log('Invalid WS message', err);
-            }
-        });
+        super.connect();
     }
-
 
     async start({ text, mode }: StartPayload) {
         this.stopped = false;
@@ -132,6 +116,7 @@ export class PerplexityContentApp extends ContentAppAbstract {
 
         if (!input) {
             log('Input not found');
+            this.finishTask();
             return;
         }
 
@@ -210,6 +195,7 @@ export class PerplexityContentApp extends ContentAppAbstract {
                     this.stopped = true;
                     this.send({ type: 'stop' });
                 }
+                this.finishTask();
             }
         });
     }

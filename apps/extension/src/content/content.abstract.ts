@@ -1,7 +1,10 @@
 /// <reference types="chrome"/>
 
-import { WSPayload } from 'interfaces';
-import { log } from '../common/utils';
+import { ConnectWindowEnum, TabSession, WSPayload, CommuteEvent } from 'interfaces';
+import { log, sleep } from '../common/utils';
+import { getTabSession } from '../common/window-session';
+import { WSSingleton } from '../common/ws-singleton';
+import { StartPayload } from '../common/interface';
 
 export abstract class ContentAppAbstract {
 	protected socket!: WebSocket;
@@ -10,6 +13,12 @@ export abstract class ContentAppAbstract {
 	protected stopped = false;
 	protected dom: HTMLDivElement | null = null;
 	protected outputFormat = 'plain';
+	protected windowSession: TabSession | null = null;
+	private messageUuid?: string;
+
+	private taskQueue: StartPayload[] = [];
+	private isProcessingQueue = false;
+	private currentTaskResolver: (() => void) | null = null;
 
 	/**
 	 * Return selectors for the app
@@ -61,7 +70,6 @@ export abstract class ContentAppAbstract {
 		log("Injecting stylesheet:", link);
 		document.head.appendChild(link);
 
-
 		// inject status DOM
 		const insertedDom = document.createElement('div');
 		insertedDom.id = 'contentAppStatus';
@@ -91,6 +99,7 @@ export abstract class ContentAppAbstract {
 		`;
 		document.body.appendChild(insertedDom);
 
+		this.retrieveInternalTabSession();
 		this.connect();
 		setInterval(() => this.sendHeartbeat(), 30000);
 
@@ -103,8 +112,84 @@ export abstract class ContentAppAbstract {
 	}
 
 	protected connect() {
-		// To be called by subclass, should set up socket event handlers
-		// Example: this.socket = ...
+		this.socket = WSSingleton.getSocket();
+		WSSingleton.onOpen(() => log('WS connected'));
+		WSSingleton.onError((err) => log('WS error', err));
+		WSSingleton.onClose(() => {
+			log('WS closed – reconnecting');
+		});
+		WSSingleton.onMessage((e) => {
+			if (typeof e.data !== 'string') return;
+			try {
+				const wsPayload = JSON.parse(e.data) as WSPayload<StartPayload>;
+				if (wsPayload.type === CommuteEvent.Chat && wsPayload.data) {
+					this.enqueueTask(wsPayload.data);
+				}
+			} catch (err) {
+				log('Invalid WS message', err);
+			}
+		});
+	}
+
+	protected enqueueTask(payload: StartPayload) {
+		log("Enqueuing task:", payload.uuid);
+		this.taskQueue.push(payload);
+		this.processQueue();
+	}
+
+	private async processQueue() {
+		if (this.isProcessingQueue) return;
+		this.isProcessingQueue = true;
+
+		while (this.taskQueue.length > 0) {
+			const currentTask = this.taskQueue[0];
+			this.setUUID(currentTask.uuid);
+			this.lastText = '';
+			this.stopped = false;
+
+			log("Processing task from queue:", currentTask.uuid);
+
+			// Wait until tab session is retrieved and tab is allowed to start
+			let allowed = await this.allowToStart();
+			while (!allowed) {
+				await sleep(500);
+				allowed = await this.allowToStart();
+			}
+
+			await this.occupyTab();
+
+			await new Promise<void>((resolve) => {
+				const timeoutId = setTimeout(() => {
+					log("Task safety timeout reached for:", currentTask.uuid);
+					this.send({ type: 'stop' });
+					this.finishTask();
+				}, 120000);
+
+				this.currentTaskResolver = () => {
+					clearTimeout(timeoutId);
+					resolve();
+				};
+
+				this.start(currentTask).catch((err) => {
+					log("Error starting task:", err);
+					this.send({ type: 'stop' });
+					this.finishTask();
+				});
+			});
+
+			await this.releaseTab();
+			this.taskQueue.shift();
+		}
+
+		this.isProcessingQueue = false;
+	}
+
+	public finishTask() {
+		if (this.currentTaskResolver) {
+			const resolve = this.currentTaskResolver;
+			this.currentTaskResolver = null;
+			resolve();
+		}
 	}
 
 	protected observe(mutationCallback: (a: MutationRecord[], b: MutationObserver) => void) {
@@ -120,7 +205,71 @@ export abstract class ContentAppAbstract {
 
 	protected send<T>(payload: WSPayload<T>) {
 		if (this.socket && this.socket.readyState === WebSocket.OPEN) {
-			this.socket.send(JSON.stringify(payload));
+			this.socket.send(JSON.stringify({ type: payload.type, data: { ...payload.data, uuid: this.messageUuid } }));
 		}
+	}
+
+	retrieveInternalTabSession() {
+		getTabSession().then((session) => {
+			if (session) {
+				this.windowSession = session;
+				log("Retrieved tab session:", this.windowSession);
+			} else {
+				log("No tab session found.");
+			}
+		}).catch((error) => {
+			log("Error retrieving tab session:", error);
+		});
+	}
+
+	protected setUUID(uuid: string) {
+		this.messageUuid = uuid;
+	}
+
+	protected async allowToStart() {
+		if (!this.windowSession) {
+			return false;
+		}
+		const allowToStart = await chrome.runtime.sendMessage({
+			source: ConnectWindowEnum.PollingSession,
+			payload: {
+				socketPort: this.windowSession.socketPort,
+				tabId: this.windowSession.tabId,
+				uuid: this.messageUuid
+			}
+		});
+		log("Allow to start?", allowToStart);
+		return allowToStart;
+	}
+
+	protected async occupyTab() {
+		if (!this.windowSession) {
+			return false;
+		}
+		const occupy = await chrome.runtime.sendMessage({
+			source: ConnectWindowEnum.Occupied,
+			payload: {
+				tabId: this.windowSession.tabId,
+				socketPort: this.windowSession.socketPort,
+				uuid: this.messageUuid
+			}
+		});
+
+		return occupy;
+	}
+
+	protected async releaseTab() {
+		if (!this.windowSession) {
+			return false;
+		}
+		const release = await chrome.runtime.sendMessage({
+			source: ConnectWindowEnum.Available,
+			payload: {
+				tabId: this.windowSession.tabId,
+				socketPort: this.windowSession.socketPort,
+			}
+		});
+		this.messageUuid = '';
+		return release;
 	}
 }
