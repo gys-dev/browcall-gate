@@ -14,9 +14,8 @@ export class GeminiContentApp extends ContentAppAbstract {
             response: 'message-content.ng-star-inserted:nth-last-child(1)',
             input: '.text-input-field_textarea',
             inputP: '.text-input-field_textarea p',
-            composingBtn: 'button.submit',
-            composingState: '.blue-circle.stop-icon',
-            lastNode: '.avatar_spinner_animation',
+            composingBtn: 'gem-icon-button.send-button',
+            composingState: '[data-mat-icon-name="stop"]',
             ignoreClasses: '.bg-token-sidebar-surface-primary > :first-child, .select-none.py-1, .code-block-decoration',
             agentBlockImage: '.agent-turn:nth-last-child(1) img'
             // Add more selectors as needed
@@ -88,9 +87,6 @@ export class GeminiContentApp extends ContentAppAbstract {
     isResponseComplete(): boolean {
         const composingState = document.querySelector(this.getSelectors().composingState);
         const latestElement = this.getLastResponse()?.parentElement?.parentElement;
-        const closeStateEle = latestElement?.querySelector(this.getSelectors().lastNode);
-        // const closeState = 1;
-        console.log("Close state element:", closeStateEle);
 
         if (!composingState) {
             return true
@@ -99,7 +95,7 @@ export class GeminiContentApp extends ContentAppAbstract {
     }
 
     async setMode(mode: any): Promise<void> {
-        // TODO: Implement mode switching if OpenAI UI supports it
+        // TODO: Implement mode switching if Gemini UI supports it
         // Otherwise, leave as a no-op
     }
 
@@ -111,13 +107,15 @@ export class GeminiContentApp extends ContentAppAbstract {
         if (inputEl) {
             inputEl.textContent = text;
             inputEl.dispatchEvent(new Event('input', { bubbles: true }));
-            await sleep(200); // slight delay to ensure input is registered
+            await sleep(500); // slight delay to ensure input is registered
 
             const submitBtn = document.querySelector<HTMLButtonElement>(this.getSelectors().composingBtn);
-            // Simulate pressing Enter or clicking send
-            submitBtn?.click();
+            log("submit", submitBtn)
+            if (!submitBtn) return;
+
+            submitBtn.click();
         }
-        log("Started observing OpenAI response...");
+        log("Started observing Gemini response...");
         await sleep(200);
         this.observe();
     }
