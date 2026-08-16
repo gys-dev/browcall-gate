@@ -1,0 +1,21 @@
+{
+  "name": "@browcall/local-mcp-bridge",
+  "version": "0.1.0",
+  "description": "Local MCP Bridge app connecting local MCP stdio tools to MCP Gateway",
+  "main": "main.js",
+  "bin": {
+    "local-mcp-bridge": "main.js"
+  },
+  "scripts": {
+    "start": "node main.js",
+    "dev": "nx serve local-mcp-bridge"
+  },
+  "keywords": [
+    "mcp",
+    "bridge",
+    "local",
+    "stdio"
+  ],
+  "author": "Tran Duc Y",
+  "license": "MIT"
+}

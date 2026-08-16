@@ -21,9 +21,17 @@
     "watch-extension-build": "nodemon --exec 'yarn build-extension-react' --watch apps/extension/src --ext ts,tsx,js,jsx,html,css,json",
     "build-n8n-node": "cd packages/n8n-nodes-browcall-gate && yarn build",
     "add-n8n-node": "yarn build-n8n-node && bash ./scripts/n8n-nodes-browcall-gate.sh",
-    "watch-n8n-node-build": "cd packages/n8n-nodes-browcall-gate && yarn build:watch"
+    "watch-n8n-node-build": "cd packages/n8n-nodes-browcall-gate && yarn build:watch",
+    "serve:gateway": "nx serve mcp-gateway",
+    "serve:bridge": "nx serve local-mcp-bridge",
+    "build:gateway": "nx build mcp-gateway",
+    "build:bridge": "nx build local-mcp-bridge",
+    "start:gateway": "node dist/apps/mcp-gateway/main.js",
+    "start:bridge": "node dist/apps/local-mcp-bridge/main.js"
   },
   "dependencies": {
+    "@agent-infra/mcp-server-commands": "^1.2.29",
+    "@modelcontextprotocol/sdk": "^1.6.0",
     "body-parser": "^2.2.1",
     "cors": "^2.8.5",
     "cross-env": "^10.1.0",
@@ -37,7 +45,8 @@
     "turndown": "^7.2.2",
     "turndown-plugin-gfm": "^1.0.2",
     "uuid": "^14.0.1",
-    "ws": "^8.18.3"
+    "ws": "^8.18.3",
+    "zod": "^3.24.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.8.0",

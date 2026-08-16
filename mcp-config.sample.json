@@ -1,0 +1,15 @@
+{
+  "gatewayUrl": "ws://localhost:8768",
+  "bridgeId": "mac-local-bridge",
+  "clientName": "Local Mac MCP Bridge",
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "/Users/tranducy/Documents/Project/gpt-inner-call"
+      ]
+    }
+  }
+}
