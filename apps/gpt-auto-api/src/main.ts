@@ -1,5 +1,6 @@
 import express from 'express';
 import bodyParser from 'body-parser';
+import cors from 'cors';
 import apiRoutes from './routes';
 import dotenv from 'dotenv';
 import { getWebsocketServerInstance } from './services/websocket';
@@ -14,9 +15,9 @@ export function startServer(port?: number) {
 
   const app = express();
 
-  // app.use(cors());
-  app.use(bodyParser.json());
-  app.use(bodyParser.urlencoded({ extended: true }));
+  app.use(cors());
+  app.use(bodyParser.json({ limit: '100mb' }));
+  app.use(bodyParser.urlencoded({ limit: '100mb', extended: true }));
 
   app.use(apiRoutes);
 

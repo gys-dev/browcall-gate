@@ -121,7 +121,7 @@ export class LocalMcpProcessManager {
     server: ManagedMcpServer,
     method: string,
     params?: any,
-    timeoutMs = 15000
+    timeoutMs = 1500000
   ): Promise<JsonRpcResponse> {
     const requestId = `bridge-req-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
     const jsonRpcMsg: JsonRpcRequest = {

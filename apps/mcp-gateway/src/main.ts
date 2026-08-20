@@ -21,8 +21,8 @@ export function startGateway(httpPortArg?: number, wsPortArg?: number) {
   // Initialize Express HTTP app
   const app = express();
   app.use(cors());
-  app.use(bodyParser.json());
-  app.use(bodyParser.urlencoded({ extended: true }));
+  app.use(bodyParser.json({ limit: '100mb' }));
+  app.use(bodyParser.urlencoded({ limit: '100mb', extended: true }));
 
   // Attach MCP routes
   const router = createMcpRouter(bridgeManager);

@@ -1,13 +1,14 @@
 # GPT Auto API
 
-GPT Auto API is the backend component of the GPT Inner Call project. It provides an OpenAI-compatible interface that bridges external requests to the Browcall Extension for processing.
+GPT Auto API is the backend component of the GPT Inner Call project. It provides an OpenAI & Anthropic compatible API interface that bridges external requests to the Browcall Extension for processing.
 
 ## 🚀 Features
 
-- **OpenAI Compatible**: Implements the `/v1/chat/completions` specification.
+- **Live SSE Streaming**: Dedicated `/sse` endpoint (`GET` & `POST`) for real-time live rendering and delta streaming.
+- **Claude Code & Anthropic Compatible**: Implements the `POST /v1/messages` specification supporting Claude Code CLI (`ANTHROPIC_BASE_URL=http://localhost:8766`).
+- **OpenAI Compatible**: Implements the `POST /v1/chat/completions` specification with full SSE delta chunking for modern AI agents.
 - **WebSocket Communication**: Maintains a persistent connection with the browser extension to forward requests.
-- **Streaming Support**: Supports Server-Sent Events (SSE) for real-time response streaming.
-- **Flexible Output**: Support for different output formats (text, markdown, JSON).
+- **Flexible Output**: Support for different output formats (`text`, `markdown`, `json`).
 
 ## 🛠 Installation & Running
 
@@ -35,9 +36,60 @@ npm run start:api
 
 ## 📖 API Reference
 
-### Chat Completions
+### 1. Live Rendering SSE Endpoint (`/sse`, `/v1/sse`, `/v1/chat/sse`)
 
-Forwards a chat request to the connected browser extension.
+Streams real-time text updates as they render in the browser extension.
+
+**URL**: `/sse` or `/v1/chat/sse`  
+**Method**: `GET` or `POST`  
+**Content-Type**: `text/event-stream`
+
+#### Query / Body Parameters
+
+| Parameter | Type | Required | Description |
+| :--- | :--- | :--- | :--- |
+| `prompt` / `q` | `string` | No* | Prompt text for single-prompt requests. |
+| `messages` | `Array\|string` | No* | Array of message objects or string prompt. (*Either `prompt` or `messages` is required). |
+| `outputFormat` | `string` | No | Desired format (`markdown`, `json`, `text`). Default: `text`. |
+
+#### Example (cURL GET)
+
+```bash
+curl -N "http://localhost:8766/sse?prompt=Explain+quantum+physics"
+```
+
+---
+
+### 2. Claude Code / Anthropic Messages API (`POST /v1/messages`)
+
+Full compatibility with Claude Code CLI and Anthropic API clients.
+
+**URL**: `/v1/messages`  
+**Method**: `POST`  
+**Content-Type**: `application/json`
+
+#### Request Example (cURL)
+
+```bash
+curl -N --location 'http://localhost:8766/v1/messages' \
+--header 'Content-Type: application/json' \
+--data '{
+  "model": "claude-3-5-sonnet-20241022",
+  "messages": [
+    {
+      "role": "user",
+      "content": "Hello Claude Code"
+    }
+  ],
+  "stream": true
+}'
+```
+
+---
+
+### 3. Chat Completions (`POST /v1/chat/completions`)
+
+OpenAI-compatible chat completions endpoint for AI agents (Cursor, Windsurf, LangChain, etc.).
 
 **URL**: `/v1/chat/completions`  
 **Method**: `POST`  
@@ -47,14 +99,14 @@ Forwards a chat request to the connected browser extension.
 
 | Parameter | Type | Required | Description |
 | :--- | :--- | :--- | :--- |
-| `messages` | `Array` | Yes | An array of message objects. Each object must have `role` (user/assistant) and `content`. |
-| `outputFormat` | `string` | No | Desired format. Options: `markdown`, `json`, `text`. Default: `text`. |
-| `stream` | `boolean` | No | Whether to stream the response using SSE. |
+| `messages` | `Array` | Yes | An array of message objects (`role`, `content`). |
+| `outputFormat` | `string` | No | Options: `markdown`, `json`, `text`. Default: `text`. |
+| `stream` | `boolean` | No | Enable OpenAI SSE `chat.completion.chunk` delta streaming. |
 
 #### Request Example (cURL)
 
 ```bash
-curl --location 'http://localhost:8766/v1/chat/completions' \
+curl -N --location 'http://localhost:8766/v1/chat/completions' \
 --header 'Content-Type: application/json' \
 --data '{
   "messages": [
@@ -63,18 +115,8 @@ curl --location 'http://localhost:8766/v1/chat/completions' \
       "content": "Give me random markdown"
     }
   ],
-  "outputFormat": "markdown"
+  "stream": true
 }'
-```
-
-#### Response Example (Success)
-
-```json
-{
-  "data": {
-    "text": "### Here is some markdown\n- Item 1\n- Item 2"
-  }
-}
 ```
 
 ## ⚙️ Environment Variables
@@ -88,7 +130,6 @@ Create a `.env` file in the root or `apps/gpt-auto-api/` directory:
 
 ## 🏗 Architecture
 
-1. **Express Server**: Handles incoming HTTP requests.
-2. **WebSocket Server**: Manages connections from the Browcall Extension.
-3. **SSE Helper**: Manages streaming responses to the client.
-4. **Validation Middleware**: Ensures requests meet the required schema.
+1. **Express Server**: Exposes standard OpenAI, Anthropic, and SSE endpoints.
+2. **WebSocket Server**: Manages connections to the Browcall Extension.
+3. **SSE Utility**: Handles live streaming deltas and protocol event formatting.

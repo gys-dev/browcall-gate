@@ -152,15 +152,21 @@ Create an `mcp-config.json` file in the root directory (see [`mcp-config.sample.
 
 ## 📖 API Documentation
 
-### OpenAI-Compatible Chat
-- **Endpoint**: `POST /v1/chat/completions` (Port `8766`)
-- **Description**: Forwards chat completions requests to active browser extension sessions.
+### Claude Code (Anthropic Messages API)
+- **Endpoint**: `POST /v1/messages` (Port `8766`)
+- **Description**: Anthropic Messages API specification for Claude Code CLI integration (`ANTHROPIC_BASE_URL=http://localhost:8766`).
+
+### Live SSE Streaming
+- **Endpoint**: `GET /sse` or `POST /sse` (Port `8766`)
+- **Description**: Real-time live rendering streaming deltas via Server-Sent Events.
 
 ### MCP Gateway
-- **Endpoint**: `POST /mcp` (Port `8767`)
+- **Endpoint**: `POST /mcp` & `GET /sse` (Port `8767`)
 - **Description**: Forwards JSON-RPC 2.0 MCP requests (`tools/list`, `tools/call`, `initialize`, `ping`) to connected Local MCP Bridges.
 - **Health Check**: `GET /health`
 - **Connected Bridges & Tools**: `GET /bridges`
+
+For step-by-step setup guides, see the [Claude Code & AI Agent Guide](./docs/CLAUDE_CODE_GUIDE.md).
 
 ---
 
