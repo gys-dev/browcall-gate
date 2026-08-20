@@ -1,5 +1,5 @@
 {
-  "name": "gpt-inner-call",
+  "name": "browcall-call",
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
@@ -24,10 +24,17 @@
     "watch-n8n-node-build": "cd packages/n8n-nodes-browcall-gate && yarn build:watch",
     "serve:gateway": "nx serve mcp-gateway",
     "serve:bridge": "nx serve local-mcp-bridge",
+    "serve:cli": "nx serve interface-cli",
     "build:gateway": "nx build mcp-gateway",
     "build:bridge": "nx build local-mcp-bridge",
+    "build:cli": "nx build interface-cli",
+    "build:backend": "nx build gpt-auto-api && nx build mcp-gateway && nx build local-mcp-bridge",
+    "build:all:apps": "yarn build:backend && yarn build:cli",
     "start:gateway": "node dist/apps/mcp-gateway/main.js",
-    "start:bridge": "node dist/apps/local-mcp-bridge/main.js"
+    "start:bridge": "node dist/apps/local-mcp-bridge/main.js",
+    "start:cli": "node dist/apps/interface-cli/main.js",
+    "prepare:cli-dist": "node scripts/prepare-cli-dist.js",
+    "publish:cli": "yarn build:all:apps && yarn prepare:cli-dist && cd dist/apps/interface-cli && npm publish --access public --registry=https://registry.npmjs.org/"
   },
   "dependencies": {
     "@agent-infra/mcp-server-commands": "^1.2.29",

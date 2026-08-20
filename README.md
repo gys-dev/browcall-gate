@@ -28,7 +28,7 @@ The project is organized as a monorepo using [Nx](https://nx.dev/):
 - **[Browcall Extension](./apps/extension)**: A browser extension (Manifest V3) that injects logic into AI chat platforms (ChatGPT, Perplexity) to facilitate automated interactions.
 - **[GPT Auto API](./apps/gpt-auto-api)**: A Node.js backend server that exposes an OpenAI-compatible `/v1/chat/completions` endpoint. It communicates with the browser extension to execute requests and retrieve responses.
 - **[MCP Gateway](./apps/mcp-gateway)**: Remote MCP proxy and routing server that exposes an MCP endpoint (`/mcp`) for GPT/clients and accepts WebSocket connections from Local MCP Bridges.
-- **[Local MCP Bridge](./apps/local-mcp-bridge)**: Local Node.js application running on the user's machine. It connects to local MCP servers via stdio (e.g., filesystem tools) and establishes an outbound WebSocket connection to the MCP Gateway.
+- **[Interface CLI](./apps/interface-cli)**: CLI launcher tool (`browcall`) to manage and quick-start all backend services (`gpt-auto-api`, `mcp-gateway`, `local-mcp-bridge`). Publishable to NPM as `@ducy23061999/browcall-cli`.
 
 ### 📦 Packages
 - **[n8n-nodes-browcall-gate](https://github.com/gys-dev/n8n-nodes-browcall-gate)**: Custom n8n nodes to integrate Browcall directly into your automation workflows.
@@ -122,6 +122,28 @@ Local MCP Server (e.g., @modelcontextprotocol/server-filesystem)
   ```bash
   yarn build:gateway
   yarn build:bridge
+  ```
+
+### 3. Interface CLI (Quick-Start All Services)
+- **Start all backend services via CLI**:
+  ```bash
+  # Build backend services & CLI
+  yarn build:all:apps
+
+  # Launch CLI (starts gpt-auto-api, mcp-gateway, local-mcp-bridge)
+  yarn start:cli start --all
+
+  # Or launch interactive menu
+  yarn start:cli interactive
+  ```
+
+- **Prepare & Publish CLI to NPM**:
+  ```bash
+  # Prepares dist/apps/interface-cli with embedded dist artifacts
+  yarn prepare:cli-dist
+
+  # Build, prepare dist, and publish
+  yarn publish:cli
   ```
 
 ---

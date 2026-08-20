@@ -1,0 +1,40 @@
+{
+  "name": "@ducy23061999/browcall-cli",
+  "version": "1.0.13",
+  "description": "Quick-start CLI launcher for Browcall backend components",
+  "main": "main.js",
+  "bin": {
+    "browcall": "main.js",
+    "browcall-cli": "main.js",
+    "interface-cli": "main.js"
+  },
+  "files": [
+    "main.js",
+    "apps",
+    "mcp-config.sample.json",
+    "README.md",
+    "docs"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "dependencies": {
+    "@agent-infra/mcp-server-commands": "^1.2.29",
+    "@modelcontextprotocol/sdk": "^1.6.0",
+    "body-parser": "^2.2.1",
+    "cors": "^2.8.5",
+    "cross-env": "^10.1.0",
+    "dotenv": "^17.2.3",
+    "express": "^4.21.2",
+    "playwright": "^1.57.0",
+    "playwright-extra": "^4.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2",
+    "tslib": "^2.8.1",
+    "turndown": "^7.2.2",
+    "turndown-plugin-gfm": "^1.0.2",
+    "uuid": "^14.0.1",
+    "ws": "^8.18.3",
+    "zod": "^3.24.1"
+  }
+}
