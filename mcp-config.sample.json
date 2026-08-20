@@ -4,11 +4,29 @@
   "clientName": "Local Mac MCP Bridge",
   "mcpServers": {
     "filesystem": {
-      "command": "npx",
+      "command": "npm",
       "args": [
-        "-y",
+        "exec",
+        "--yes",
         "@modelcontextprotocol/server-filesystem",
         "/Users/tranducy/Documents/Project/gpt-inner-call"
+      ]
+    },
+    "ansible-script-mcp": {
+      "command": "node",
+      "args": [
+        "/Users/tranducy/Documents/Project/ansible-script-public/mcp-server.js"
+      ],
+      "env": {
+        "PATH": "/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+      }
+    },
+    "mcp-server-commands": {
+      "command": "/bin/zsh",
+      "args": [
+        "-i",
+        "-c",
+        "npx mcp-server-commands"
       ]
     }
   }
