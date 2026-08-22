@@ -8,3 +8,4 @@ node_modules/
 packages/*/node_modules/
 .tmp
 .knowns
+logs/

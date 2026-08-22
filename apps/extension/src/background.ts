@@ -5,6 +5,17 @@ import { log } from "./common/utils";
 const activeSession = new Map<number, TabSession>();
 // socketPort -> array of messages { uuid, tabId } attached for session
 const sessionMessage = new Map<number, { uuid: string, tabId: number }[]>()
+const SESSION_STORAGE_PREFIX = "active-session:";
+
+function getSessionStorageKey(tabId: number) {
+    return `${SESSION_STORAGE_PREFIX}${tabId}`;
+}
+
+async function getStoredSession(tabId: number) {
+    const key = getSessionStorageKey(tabId);
+    const stored = await chrome.storage.session.get(key);
+    return stored[key] as TabSession | undefined;
+}
 
 chrome.runtime.onMessage.addListener((event, sender, callback) => {
     log('background.ts onMessage', event, sender, callback)
@@ -16,6 +27,9 @@ chrome.runtime.onMessage.addListener((event, sender, callback) => {
             }
 
             activeSession.set(tabId, event.payload);
+            chrome.storage.session.set({
+                [getSessionStorageKey(tabId)]: event.payload
+            });
             if (!sessionMessage.has(socketPort)) {
                 sessionMessage.set(socketPort, []);
             }
@@ -27,11 +41,17 @@ chrome.runtime.onMessage.addListener((event, sender, callback) => {
             const { tabId } = event.payload;
             const session = activeSession.get(tabId);
             if (session) {
-                callback(session)
-            } else {
-                callback(null)
+                callback(session);
+                break;
             }
-            break;
+
+            getStoredSession(tabId).then((storedSession) => {
+                if (storedSession) {
+                    activeSession.set(tabId, storedSession);
+                }
+                callback(storedSession || null);
+            });
+            return true;
         }
         case ConnectWindowEnum.Disconnect: {
             const { tabId } = event.payload;
@@ -43,6 +63,7 @@ chrome.runtime.onMessage.addListener((event, sender, callback) => {
 
             const { socketPort } = session;
             activeSession.delete(tabId);
+            chrome.storage.session.remove(getSessionStorageKey(tabId));
 
             const hasOtherTabForPort = Array.from(activeSession.values()).some(s => s.socketPort === socketPort);
             if (!hasOtherTabForPort) {

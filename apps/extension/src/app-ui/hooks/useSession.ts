@@ -6,39 +6,34 @@ import { log } from "../../common/utils";
 
 export function useSession() {
     const [tabId, sendMessage] = useEventWindow()
-    const [sessionInfo, setSession] = useState<SessionPayload | null>()
+    const [sessionInfo, setSession] = useState<SessionPayload | null>(null)
 
     useEffect(() => {
-        if (tabId) {
-            getSession()
+        if (typeof tabId !== 'number') {
+            setSession(null)
+            return
         }
 
-        // Handle Disconnect Event -> Remove session
-        chrome.runtime.onMessage.addListener(event => {
+        getSession()
 
+        const handleMessage = (event: any) => {
+            const sourceTabId = event?.payload?.tabId;
+            if (sourceTabId !== tabId) {
+                return
+            }
 
-            if (event.source == ConnectWindowEnum.Disconnected) {
-                const { tabId: sourceTabId } = event?.payload;
-                if (sourceTabId != tabId) {
-                    // ignore
-                    return;
-                }
+            if (event.source === ConnectWindowEnum.Disconnected) {
                 log("Disconnect")
                 setSession(null)
             }
-        })
 
-        chrome.runtime.onMessage.addListener(event => {
-            if (event.source == ConnectWindowEnum.NewSession) {
-                const { tabId: sourceTabId } = event?.payload;
-                if (sourceTabId != tabId) {
-                    // ignore
-                    return;
-                }
+            if (event.source === ConnectWindowEnum.NewSession) {
                 getSession()
             }
-        })
+        }
 
+        chrome.runtime.onMessage.addListener(handleMessage)
+        return () => chrome.runtime.onMessage.removeListener(handleMessage)
     }, [tabId])
 
     const getSession = async () => {
@@ -51,9 +46,7 @@ export function useSession() {
             }
         })
 
-        if (session) {
-            setSession(session as SessionPayload)
-        }
+        setSession((session as SessionPayload | null) || null)
 
     }
 

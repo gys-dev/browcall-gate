@@ -3,8 +3,12 @@ import { randomUUID } from 'crypto';
 import { CommuteEvent, WSPayload } from "interfaces"
 
 interface WSRequest {
-  uuid: string
+  uuid: string;
   text: string;
+  initialContext?: {
+    system: string;
+    initialUser: string;
+  };
   outputFormat: string;
 }
 
@@ -44,6 +48,7 @@ interface QueuedRequest {
 interface ConnectionState {
   id: string;
   socket: WebSocket;
+  contextInitialized: boolean;
   finalTextMap: Map<string, string>;
   pendingRequests: Map<string, PendingRequest>;
   queue: QueuedRequest[];
@@ -65,6 +70,7 @@ export class WebSocketServer {
       const state: ConnectionState = {
         id: connectionId,
         socket,
+        contextInitialized: false,
         finalTextMap: new Map(),
         pendingRequests: new Map(),
         queue: [],
@@ -205,6 +211,21 @@ export class WebSocketServer {
   ) {
     console.log(`Sending request to browser (connection: ${state.id}):`, request.type, 'uuid:', targetUuid);
 
+    const { initialContext, ...requestData } = request.data;
+    const outgoingRequest = {
+      ...request,
+      data: {
+        ...requestData,
+        text: state.contextInitialized && initialContext
+          ? request.data.text
+          : initialContext
+            ? [initialContext.system, initialContext.initialUser]
+                .filter(Boolean)
+                .join('\n\n')
+            : request.data.text,
+      },
+    };
+
     const listener = (message: WebSocket.RawData) => {
       this.listenMessageCallBack(state, targetUuid, message, callback);
     };
@@ -224,7 +245,11 @@ export class WebSocketServer {
     });
 
     state.socket.on('message', listener);
-    state.socket.send(JSON.stringify(request));
+    state.socket.send(JSON.stringify(outgoingRequest));
+
+    if (!state.contextInitialized && initialContext) {
+      state.contextInitialized = true;
+    }
   }
 
   /**

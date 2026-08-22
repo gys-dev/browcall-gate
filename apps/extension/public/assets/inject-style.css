@@ -10,6 +10,7 @@
     z-index: 10000;
     border: 2px solid var(--bg-accent-static);
     display: none;
+    pointer-events: none;
 }
 .col-width {
     width: 100px;
