@@ -1,6 +1,6 @@
 {
   "name": "@ducy23061999/browcall-cli",
-  "version": "1.0.13",
+  "version": "1.1.0",
   "description": "Quick-start CLI launcher for Browcall backend components",
   "main": "main.js",
   "bin": {

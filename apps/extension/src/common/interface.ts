@@ -1,7 +1,8 @@
 export enum Host {
     PerplexityAI = 'perplexity.ai',
     ChatGPT = 'chatgpt.com',
-    Gemini = 'gemini.google.com'
+    Gemini = 'gemini.google.com',
+    Claude = 'claude.ai'
 }
 
 export type StartPayload = {

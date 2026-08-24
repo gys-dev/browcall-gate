@@ -6,13 +6,14 @@ import { ContentAppAbstract } from "./content/content.abstract";
 import { GeminiContentApp } from "./content/gemini/gemini";
 import { OpenAIContentApp } from "./content/openai";
 import { PerplexityContentApp } from "./content/perplexity/index";
+import { ClaudeContentApp } from "./content/claude";
 import { CommuteEvent, ConnectWindowEnum, TabSession } from "interfaces";
 import { getTabSession } from "./common/window-session";
 
 
 /* -------------------- bootstrap (content-script safe) -------------------- */
 
-log('Injecting Perplexity content script');
+log('Injecting AI content script');
 
 const hostname = window.location.hostname;
 const appName = getApp(hostname);
@@ -34,6 +35,11 @@ switch (appName) {
     case Host.Gemini:
         log('Gemini content app not implemented yet');
         app = new GeminiContentApp();
+        break;
+
+    case Host.Claude:
+        log('Claude content app');
+        app = new ClaudeContentApp();
         break;
 
     default:

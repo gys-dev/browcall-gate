@@ -73,6 +73,7 @@ messagesRouter.post('/', async (req: Request, res: Response) => {
   const uuid = randomUUID();
   const startedAt = Date.now();
   const timestamp = new Date().toISOString();
+  const outputFormat = 'markdown';
 
   const systemContent = getSystemText(system);
   const messagesToLog = messages.map((message, index) => ({
@@ -173,7 +174,7 @@ messagesRouter.post('/', async (req: Request, res: Response) => {
         system: systemContent,
         initialUser: initialUserText,
       },
-      outputFormat: 'markdown',
+      outputFormat,
     },
   };
 
@@ -241,7 +242,7 @@ messagesRouter.post('/', async (req: Request, res: Response) => {
     if (responseFinished) return;
 
     try {
-      const fullText = response || '';
+      const fullText = (response || '').trim();
       const deltaText = fullText.slice(prevTextLen);
       if (deltaText) {
         prevTextLen = fullText.length;

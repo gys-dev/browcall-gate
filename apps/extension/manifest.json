@@ -40,7 +40,8 @@
       "matches": [
         "https://www.perplexity.ai/*",
         "https://chatgpt.com/*",
-        "https://gemini.google.com/*"
+        "https://gemini.google.com/*",
+        "https://claude.ai/*"
       ]
     }
   ],
@@ -49,7 +50,8 @@
       "matches": [
         "https://www.perplexity.ai/*",
         "https://chatgpt.com/*",
-        "https://gemini.google.com/*"
+        "https://gemini.google.com/*",
+        "https://claude.ai/*"
       ],
       "js": [
         "inject.js"

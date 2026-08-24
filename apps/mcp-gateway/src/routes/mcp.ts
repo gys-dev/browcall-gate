@@ -1,5 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js';
+import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
+import { randomUUID } from 'crypto';
 import { BridgeManager } from '../services/bridge-manager';
 import { createSdkMcpServer } from '../services/mcp-server';
 import { JsonRpcRequest } from '../types';
@@ -9,6 +11,7 @@ export function createMcpRouter(bridgeManager: BridgeManager): Router {
 
   // Active SSE Transports map by sessionId
   const sseTransports = new Map<string, SSEServerTransport>();
+  const streamableTransports = new Map<string, StreamableHTTPServerTransport>();
 
   /**
    * Health Check Endpoint
@@ -101,72 +104,102 @@ export function createMcpRouter(bridgeManager: BridgeManager): Router {
   });
 
   /**
-   * Main Streamable HTTP MCP Endpoint (POST /mcp)
+   * Streamable HTTP MCP Endpoint (POST/GET/DELETE /mcp)
    */
   router.post('/mcp', async (req: Request, res: Response) => {
-    const jsonRpcReq = req.body as JsonRpcRequest;
+    const sessionId = req.headers['mcp-session-id'] as string | undefined;
+    let transport = sessionId ? streamableTransports.get(sessionId) : undefined;
 
-    if (!jsonRpcReq || jsonRpcReq.jsonrpc !== '2.0' || !jsonRpcReq.method) {
+    if (!transport) {
+      const jsonRpcReq = req.body as JsonRpcRequest;
+
+      if (jsonRpcReq?.method !== 'initialize') {
+        const bridgeId = (req.query.bridgeId as string) || (req.headers['x-bridge-id'] as string);
+
+        if (jsonRpcReq?.jsonrpc === '2.0' && jsonRpcReq.method === 'tools/list' && !bridgeId) {
+          res.json({
+            jsonrpc: '2.0',
+            id: jsonRpcReq.id,
+            result: { tools: bridgeManager.getAggregatedTools() },
+          });
+          return;
+        }
+
+        if (jsonRpcReq?.jsonrpc === '2.0' && jsonRpcReq.method) {
+          try {
+            const response = await bridgeManager.forwardRequest(jsonRpcReq, bridgeId);
+            res.json(response);
+          } catch (err: any) {
+            res.status(500).json({
+              jsonrpc: '2.0',
+              id: jsonRpcReq.id,
+              error: { code: -32603, message: `Internal Gateway Error: ${err?.message || err}` },
+            });
+          }
+          return;
+        }
+      }
+
+      if (!jsonRpcReq || jsonRpcReq.jsonrpc !== '2.0' || jsonRpcReq.method !== 'initialize') {
+        res.status(400).json({
+          jsonrpc: '2.0',
+          id: jsonRpcReq?.id || null,
+          error: { code: -32600, message: 'Invalid Request' },
+        });
+        return;
+      }
+
+      transport = new StreamableHTTPServerTransport({
+        sessionIdGenerator: () => randomUUID(),
+        onsessioninitialized: (newSessionId) => {
+          streamableTransports.set(newSessionId, transport!);
+        },
+      });
+
+      transport.onclose = () => {
+        if (transport?.sessionId) {
+          streamableTransports.delete(transport.sessionId);
+        }
+      };
+
+      const sdkMcpServer = createSdkMcpServer(bridgeManager);
+      await sdkMcpServer.connect(transport);
+    }
+
+    await transport.handleRequest(req, res, req.body);
+  });
+
+  router.get('/mcp', async (req: Request, res: Response) => {
+    const sessionId = req.headers['mcp-session-id'] as string | undefined;
+    const transport = sessionId ? streamableTransports.get(sessionId) : undefined;
+
+    if (!transport) {
       res.status(400).json({
         jsonrpc: '2.0',
-        id: jsonRpcReq?.id || null,
-        error: {
-          code: -32600,
-          message: 'Invalid Request: Must be a valid JSON-RPC 2.0 object with method',
-        },
+        id: null,
+        error: { code: -32000, message: 'Missing or invalid MCP session ID' },
       });
       return;
     }
 
-    const bridgeId = (req.query.bridgeId as string) || (req.headers['x-bridge-id'] as string);
+    await transport.handleRequest(req, res);
+  });
 
-    // Protocol Handshake
-    if (jsonRpcReq.method === 'initialize') {
-      res.json({
+  router.delete('/mcp', async (req: Request, res: Response) => {
+    const sessionId = req.headers['mcp-session-id'] as string | undefined;
+    const transport = sessionId ? streamableTransports.get(sessionId) : undefined;
+
+    if (!transport) {
+      res.status(404).json({
         jsonrpc: '2.0',
-        id: jsonRpcReq.id,
-        result: {
-          protocolVersion: '2026-07-28',
-          capabilities: {
-            tools: { listChanged: true },
-            resources: { subscribe: true, listChanged: true },
-            prompts: { listChanged: true },
-          },
-          serverInfo: {
-            name: 'MCP Gateway',
-            version: '1.0.0',
-          },
-        },
+        id: null,
+        error: { code: -32001, message: 'Session not found' },
       });
       return;
     }
 
-    // Fast-path tool list
-    if (jsonRpcReq.method === 'tools/list' && !bridgeId) {
-      res.json({
-        jsonrpc: '2.0',
-        id: jsonRpcReq.id,
-        result: {
-          tools: bridgeManager.getAggregatedTools(),
-        },
-      });
-      return;
-    }
-
-    // Forward request to Local MCP Bridge over WebSocket
-    try {
-      const response = await bridgeManager.forwardRequest(jsonRpcReq, bridgeId);
-      res.json(response);
-    } catch (err: any) {
-      res.status(500).json({
-        jsonrpc: '2.0',
-        id: jsonRpcReq.id,
-        error: {
-          code: -32603,
-          message: `Internal Gateway Error: ${err?.message || err}`,
-        },
-      });
-    }
+    await transport.handleRequest(req, res);
+    streamableTransports.delete(sessionId!);
   });
 
   return router;
