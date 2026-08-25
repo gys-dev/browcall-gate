@@ -49,7 +49,10 @@ export function startGateway(httpPortArg?: number, wsPortArg?: number) {
             ws,
             bridgeId,
             msg.payload?.clientName,
-            msg.payload?.tools || []
+            msg.payload?.tools || [],
+            msg.payload?.resources || [],
+            msg.payload?.prompts || [],
+            msg.payload?.workspaceId
           );
           registeredConnectionId = conn.connectionId;
 
@@ -65,8 +68,8 @@ export function startGateway(httpPortArg?: number, wsPortArg?: number) {
           return;
         }
 
-        if (msg.type === 'tools_update' && bridgeId) {
-          bridgeManager.updateBridgeTools(bridgeId, msg.payload?.tools || []);
+        if (msg.type === 'tools_update' && (registeredConnectionId || bridgeId)) {
+          bridgeManager.updateBridgeTools(registeredConnectionId || bridgeId!, msg.payload?.tools || []);
           return;
         }
 

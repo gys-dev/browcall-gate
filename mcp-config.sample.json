@@ -1,7 +1,8 @@
 {
   "gatewayUrl": "ws://localhost:8768",
-  "bridgeId": "mac-local-bridge",
-  "clientName": "Local Mac MCP Bridge",
+  "workspaceId": "gpt_inner_call",
+  "bridgeId": "gpt_inner_call",
+  "clientName": "gpt_inner_call Bridge",
   "mcpServers": {
     "filesystem": {
       "command": "npm",

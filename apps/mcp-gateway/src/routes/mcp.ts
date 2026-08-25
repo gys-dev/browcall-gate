@@ -24,6 +24,7 @@ export function createMcpRouter(bridgeManager: BridgeManager): Router {
       activeBridgesCount: bridges.length,
       bridges: bridges.map((b) => ({
         bridgeId: b.bridgeId,
+        workspaceId: b.workspaceId,
         clientName: b.clientName,
         connectedAt: b.connectedAt,
         toolsCount: b.tools.length,
@@ -43,6 +44,7 @@ export function createMcpRouter(bridgeManager: BridgeManager): Router {
       bridges: bridges.map((b) => ({
         connectionId: b.connectionId,
         bridgeId: b.bridgeId,
+        workspaceId: b.workspaceId,
         clientName: b.clientName,
         connectedAt: b.connectedAt,
         tools: b.tools,
@@ -68,7 +70,9 @@ export function createMcpRouter(bridgeManager: BridgeManager): Router {
       sseTransports.delete(transport.sessionId);
     };
 
-    const sdkMcpServer = createSdkMcpServer(bridgeManager);
+    const workspaceId =
+      (req.query.workspaceId as string) || (req.headers['x-workspace-id'] as string);
+    const sdkMcpServer = createSdkMcpServer(bridgeManager, workspaceId);
     await sdkMcpServer.connect(transport);
   });
 
@@ -88,7 +92,9 @@ export function createMcpRouter(bridgeManager: BridgeManager): Router {
     const jsonRpcReq = req.body as JsonRpcRequest;
     if (jsonRpcReq && jsonRpcReq.jsonrpc === '2.0' && jsonRpcReq.method) {
       try {
-        const response = await bridgeManager.forwardRequest(jsonRpcReq);
+        const workspaceId =
+          (req.query.workspaceId as string) || (req.headers['x-workspace-id'] as string);
+        const response = await bridgeManager.forwardRequest(jsonRpcReq, undefined, 30000, workspaceId);
         res.json(response);
       } catch (err: any) {
         res.status(500).json({
@@ -112,6 +118,8 @@ export function createMcpRouter(bridgeManager: BridgeManager): Router {
 
     if (!transport) {
       const jsonRpcReq = req.body as JsonRpcRequest;
+      const workspaceId =
+        (req.query.workspaceId as string) || (req.headers['x-workspace-id'] as string);
 
       if (jsonRpcReq?.method !== 'initialize') {
         const bridgeId = (req.query.bridgeId as string) || (req.headers['x-bridge-id'] as string);
@@ -120,14 +128,19 @@ export function createMcpRouter(bridgeManager: BridgeManager): Router {
           res.json({
             jsonrpc: '2.0',
             id: jsonRpcReq.id,
-            result: { tools: bridgeManager.getAggregatedTools() },
+            result: { tools: bridgeManager.getAggregatedTools(workspaceId) },
           });
           return;
         }
 
         if (jsonRpcReq?.jsonrpc === '2.0' && jsonRpcReq.method) {
           try {
-            const response = await bridgeManager.forwardRequest(jsonRpcReq, bridgeId);
+            const response = await bridgeManager.forwardRequest(
+              jsonRpcReq,
+              bridgeId,
+              30000,
+              workspaceId
+            );
             res.json(response);
           } catch (err: any) {
             res.status(500).json({
@@ -162,7 +175,7 @@ export function createMcpRouter(bridgeManager: BridgeManager): Router {
         }
       };
 
-      const sdkMcpServer = createSdkMcpServer(bridgeManager);
+      const sdkMcpServer = createSdkMcpServer(bridgeManager, workspaceId);
       await sdkMcpServer.connect(transport);
     }
 

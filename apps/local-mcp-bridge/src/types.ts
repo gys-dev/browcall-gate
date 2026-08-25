@@ -8,6 +8,7 @@ export interface McpServerConfig {
 export interface BridgeConfig {
   gatewayUrl: string;
   bridgeId: string;
+  workspaceId?: string;
   clientName?: string;
   mcpServers: Record<string, McpServerConfig>;
 }

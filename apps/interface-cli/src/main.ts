@@ -95,6 +95,16 @@ function locateMcpTemplate(): string | null {
   return null;
 }
 
+function sanitizeWorkspaceId(folderPath: string): string {
+  const folderName = path.basename(path.resolve(folderPath));
+  const sanitized = folderName
+    .toLowerCase()
+    .replace(/[^a-zA-Z0-9]/g, '_')
+    .replace(/_+/g, '_')
+    .replace(/^_+|_+$/g, '');
+  return sanitized || 'local_bridge';
+}
+
 function generateMcpConfigFromTemplate(
   projectDir: string,
   wsPort = '8768',
@@ -118,11 +128,14 @@ function generateMcpConfigFromTemplate(
     }
   }
 
+  const projectWorkspaceId = sanitizeWorkspaceId(resolvedProjectDir);
+
   if (!configData) {
     configData = {
       gatewayUrl: `ws://localhost:${wsPort}`,
-      bridgeId: 'mac-local-bridge',
-      clientName: 'Local Mac MCP Bridge',
+      workspaceId: projectWorkspaceId,
+      bridgeId: projectWorkspaceId,
+      clientName: `${projectWorkspaceId} Bridge`,
       mcpServers: {
         filesystem: {
           command: 'npm',
@@ -132,6 +145,14 @@ function generateMcpConfigFromTemplate(
     };
   } else {
     configData.gatewayUrl = `ws://localhost:${wsPort}`;
+    configData.workspaceId = projectWorkspaceId;
+    if (!configData.bridgeId || configData.bridgeId === 'mac-local-bridge' || configData.bridgeId === 'local-mac-bridge') {
+      configData.bridgeId = projectWorkspaceId;
+    }
+    if (!configData.clientName || configData.clientName === 'Local Mac MCP Bridge') {
+      configData.clientName = `${projectWorkspaceId} Bridge`;
+    }
+
     if (configData.mcpServers && configData.mcpServers.filesystem) {
       if (Array.isArray(configData.mcpServers.filesystem.args)) {
         const args = configData.mcpServers.filesystem.args;
@@ -237,6 +258,7 @@ function killPreviousServiceProcesses(serviceKey?: string) {
   const targets = serviceKey ? [serviceKey] : Object.keys(SERVICES);
 
   for (const key of targets) {
+    if (key === 'local-mcp-bridge') continue;
     const service = SERVICES[key];
     if (!service) continue;
 
@@ -320,6 +342,13 @@ function startService(serviceKey: string, customEnv: Record<string, string> = {}
     const gwUrl = customEnv['GATEWAY_URL'] || `ws://${targetHost}:${targetWsPort}`;
     serviceSpecificEnv['GATEWAY_URL'] = gwUrl;
     serviceSpecificEnv['GATEWAY_WS_URL'] = gwUrl;
+    if (customEnv['BRIDGE_CONFIG_PATH']) {
+      serviceSpecificEnv['BRIDGE_CONFIG_PATH'] = customEnv['BRIDGE_CONFIG_PATH'];
+    }
+    const targetProjectDir = customEnv['PROJECT_DIR'] || process.cwd();
+    const wsId = sanitizeWorkspaceId(targetProjectDir);
+    serviceSpecificEnv['WORKSPACE_ID'] = customEnv['WORKSPACE_ID'] || wsId;
+    serviceSpecificEnv['BRIDGE_ID'] = customEnv['BRIDGE_ID'] || wsId;
   }
 
   const resolvedPath = resolveServicePath(serviceKey);

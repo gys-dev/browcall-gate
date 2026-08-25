@@ -47,6 +47,7 @@ export interface McpPrompt {
 export interface BridgeRegistration {
   type: 'register';
   bridgeId: string;
+  workspaceId?: string;
   clientName?: string;
   tools?: McpTool[];
   resources?: McpResource[];
@@ -63,6 +64,7 @@ export interface GatewayWsMessage {
 export interface LocalBridgeConnection {
   connectionId: string;
   bridgeId: string;
+  workspaceId?: string;
   ws: WebSocket;
   connectedAt: Date;
   clientName?: string;

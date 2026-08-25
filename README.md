@@ -45,13 +45,63 @@ GPT / Client
      ▼
 MCP Gateway (apps/mcp-gateway)
      │
-     │ WebSocket Connection (ws://localhost:8768)
+     │ Workspace-aware WebSocket routing (ws://localhost:8768)
      ▼
-Local MCP Bridge (apps/local-mcp-bridge)
+Local MCP Bridge(s)
      │
      │ Stdio / Child Process (JSON-RPC 2.0)
      ▼
-Local MCP Server (e.g., @modelcontextprotocol/server-filesystem)
+Local MCP Server(s) (e.g., @modelcontextprotocol/server-filesystem)
+```
+
+### Workspace-aware multi-bridge routing
+
+The MCP Gateway supports multiple Local MCP Bridge connections concurrently, including multiple bridge instances with the same `bridgeId`.
+
+The routing model is:
+
+```text
+User / AI Request
+       │
+       ▼
+   Workspace
+       │
+       ▼
+     Bridge
+       │
+       ▼
+      Tool
+```
+
+- **Workspace** identifies the project/context where an operation should run.
+- **Bridge** identifies the local MCP connection that provides access to that workspace.
+- **Scope** is the filesystem boundary enforced by the bridge.
+- A request with an explicit `workspaceId` is routed only to bridges registered for that workspace. It never silently falls back to another workspace.
+- Multiple bridge connections can belong to the same workspace, allowing duplicate bridge instances without rejecting an existing socket.
+- MCP sessions can select a workspace with the `workspaceId` query parameter or `x-workspace-id` header.
+
+Example workspace mapping:
+
+```text
+mighty-note-backend
+  → mac-local-bridge
+  → /Users/tranducy/Documents/Project/mighty_note_backend
+
+gpt-inner-call
+  → mac-local-bridge-1787664580312-17sl
+  → /Users/tranducy/Documents/Project/gpt-inner-call
+```
+
+The execution flow is:
+
+```text
+User Request
+    ↓
+Workspace Resolution
+    ↓
+Bridge Resolution
+    ↓
+MCP Tool Execution
 ```
 
 ---
@@ -184,9 +234,20 @@ Create an `mcp-config.json` file in the root directory (see [`mcp-config.sample.
 
 ### MCP Gateway
 - **Endpoint**: `POST /mcp` & `GET /sse` (Port `8767`)
-- **Description**: Forwards JSON-RPC 2.0 MCP requests (`tools/list`, `tools/call`, `initialize`, `ping`) to connected Local MCP Bridges.
-- **Health Check**: `GET /health`
+- **Description**: Forwards JSON-RPC 2.0 MCP requests (`tools/list`, `tools/call`, `initialize`, `ping`) to connected Local MCP Bridges with workspace-aware routing.
+- **Workspace selection**: `workspaceId` query parameter or `x-workspace-id` header.
+- **Health Check**: `GET /health` includes active bridge and workspace information.
 - **Connected Bridges & Tools**: `GET /bridges`
+
+### Multi-bridge verification
+
+The project includes an end-to-end test covering concurrent bridge connections, duplicate bridge IDs, workspace routing, tool aggregation, and collision disambiguation:
+
+```bash
+yarn ts-node scripts/test-multi-bridge-e2e.ts
+```
+
+The verification currently passes with three concurrent bridge connections, including two connections registered with the same `bridgeId`.
 
 For step-by-step setup guides, see the [Claude Code & AI Agent Guide](./docs/CLAUDE_CODE_GUIDE.md).
 

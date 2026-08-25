@@ -11,7 +11,7 @@ import {
 import { BridgeManager } from './bridge-manager';
 import { JsonRpcRequest } from '../types';
 
-export function createSdkMcpServer(bridgeManager: BridgeManager): Server {
+export function createSdkMcpServer(bridgeManager: BridgeManager, workspaceId?: string): Server {
   const server = new Server(
     {
       name: 'mcp-gateway',
@@ -28,7 +28,7 @@ export function createSdkMcpServer(bridgeManager: BridgeManager): Server {
 
   // 1. List Tools Handler
   server.setRequestHandler(ListToolsRequestSchema, async () => {
-    const tools = bridgeManager.getAggregatedTools();
+    const tools = bridgeManager.getAggregatedTools(workspaceId);
     return {
       tools: tools.map((t) => ({
         name: t.name,
@@ -48,7 +48,7 @@ export function createSdkMcpServer(bridgeManager: BridgeManager): Server {
       params: { name, arguments: args || {} },
     };
 
-    const response = await bridgeManager.forwardRequest(jsonRpcReq);
+    const response = await bridgeManager.forwardRequest(jsonRpcReq, undefined, 30000, workspaceId);
     if (response.error) {
       throw new Error(`Tool call failed: ${response.error.message}`);
     }
@@ -57,7 +57,7 @@ export function createSdkMcpServer(bridgeManager: BridgeManager): Server {
 
   // 3. List Resources Handler
   server.setRequestHandler(ListResourcesRequestSchema, async () => {
-    const resources = bridgeManager.getAggregatedResources();
+    const resources = bridgeManager.getAggregatedResources(workspaceId);
     return {
       resources: resources.map((r) => ({
         uri: r.uri,
@@ -76,7 +76,7 @@ export function createSdkMcpServer(bridgeManager: BridgeManager): Server {
       method: 'resources/read',
       params: request.params,
     };
-    const response = await bridgeManager.forwardRequest(jsonRpcReq);
+    const response = await bridgeManager.forwardRequest(jsonRpcReq, undefined, 30000, workspaceId);
     if (response.error) {
       throw new Error(`Resource read failed: ${response.error.message}`);
     }
@@ -85,7 +85,7 @@ export function createSdkMcpServer(bridgeManager: BridgeManager): Server {
 
   // 5. List Prompts Handler
   server.setRequestHandler(ListPromptsRequestSchema, async () => {
-    const prompts = bridgeManager.getAggregatedPrompts();
+    const prompts = bridgeManager.getAggregatedPrompts(workspaceId);
     return {
       prompts: prompts.map((p) => ({
         name: p.name,
@@ -103,7 +103,7 @@ export function createSdkMcpServer(bridgeManager: BridgeManager): Server {
       method: 'prompts/get',
       params: request.params,
     };
-    const response = await bridgeManager.forwardRequest(jsonRpcReq);
+    const response = await bridgeManager.forwardRequest(jsonRpcReq, undefined, 30000, workspaceId);
     if (response.error) {
       throw new Error(`Prompt get failed: ${response.error.message}`);
     }

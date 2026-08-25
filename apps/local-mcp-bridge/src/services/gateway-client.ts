@@ -37,13 +37,14 @@ export class GatewayClient {
 
     this.ws.on('open', () => {
       this.isConnected = true;
-      console.log(`[GatewayClient] Connected to Gateway! Registering bridgeId '${this.config.bridgeId}'...`);
+      console.log(`[GatewayClient] Connected to Gateway! Registering bridgeId '${this.config.bridgeId}' (Workspace ID: '${this.config.workspaceId}')...`);
 
       // Send register message to Gateway
       const regMsg: GatewayWsMessage = {
         type: 'register',
         bridgeId: this.config.bridgeId,
         payload: {
+          workspaceId: this.config.workspaceId,
           clientName: this.config.clientName || 'Local MCP Bridge',
           tools: this.tools,
         },
