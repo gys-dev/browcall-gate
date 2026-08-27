@@ -19,9 +19,7 @@ GPT Inner Call is a monorepo project designed to bridge the gap between AI chat 
 </p>
 
 <p align="center">
-  <video src="https://raw.githubusercontent.com/gys-dev/browcall-gate/main/resource/demo.mp4" controls width="100%"></video>
-  <br/>
-  <a href="https://raw.githubusercontent.com/gys-dev/browcall-gate/main/resource/demo.mp4">🎥 Direct link to demo.mp4</a>
+  <iframe width="100%" height="450" src="https://www.youtube.com/embed/3_XAaAYL2-U" title="Browcall Demo Video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 </p>
 
 ---
