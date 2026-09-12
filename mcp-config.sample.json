@@ -1,8 +1,8 @@
 {
   "gatewayUrl": "ws://localhost:8768",
-  "workspaceId": "gpt_inner_call",
-  "bridgeId": "gpt_inner_call",
-  "clientName": "gpt_inner_call Bridge",
+  "workspaceId": "example",
+  "bridgeId": "example",
+  "clientName": "example",
   "mcpServers": {
     "filesystem": {
       "command": "npm",
@@ -12,15 +12,6 @@
         "@modelcontextprotocol/server-filesystem",
         "/Users/tranducy/Documents/Project/gpt-inner-call"
       ]
-    },
-    "ansible-script-mcp": {
-      "command": "node",
-      "args": [
-        "/Users/tranducy/Documents/Project/ansible-script-public/mcp-server.js"
-      ],
-      "env": {
-        "PATH": "/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
-      }
     },
     "mcp-server-commands": {
       "command": "/bin/zsh",

@@ -145,13 +145,11 @@ function generateMcpConfigFromTemplate(
     };
   } else {
     configData.gatewayUrl = `ws://localhost:${wsPort}`;
+    // Always derive workspaceId and bridgeId from the target project's root
+    // folder name. Do not keep IDs from the sample/template config.
     configData.workspaceId = projectWorkspaceId;
-    if (!configData.bridgeId || configData.bridgeId === 'mac-local-bridge' || configData.bridgeId === 'local-mac-bridge') {
-      configData.bridgeId = projectWorkspaceId;
-    }
-    if (!configData.clientName || configData.clientName === 'Local Mac MCP Bridge') {
-      configData.clientName = `${projectWorkspaceId} Bridge`;
-    }
+    configData.bridgeId = projectWorkspaceId;
+    configData.clientName = `${projectWorkspaceId} Bridge`;
 
     if (configData.mcpServers && configData.mcpServers.filesystem) {
       if (Array.isArray(configData.mcpServers.filesystem.args)) {
@@ -249,9 +247,9 @@ function killProcessOnPort(portStr: string | number) {
         } else {
           process.kill(Number(pid), 'SIGKILL');
         }
-      } catch {}
+      } catch { }
     }
-  } catch {}
+  } catch { }
 }
 
 function killPreviousServiceProcesses(serviceKey?: string) {
@@ -275,12 +273,12 @@ function killPreviousServiceProcesses(serviceKey?: string) {
               console.log(`${COLOR_YELLOW}[Cleanup] Killing previous ${key} process (PID: ${pid})...${COLOR_RESET}`);
               try {
                 process.kill(Number(pid), 'SIGKILL');
-              } catch {}
+              } catch { }
             }
           }
         }
       }
-    } catch {}
+    } catch { }
   }
 }
 
@@ -444,7 +442,7 @@ function getNgrokPublicUrl(): Promise<string | null> {
             resolve(httpsTunnel.public_url);
             return;
           }
-        } catch {}
+        } catch { }
         resolve(null);
       });
     });
@@ -461,7 +459,7 @@ async function startNgrokTunnel(gatewayPort: string | number, authtoken?: string
   if (authtoken) {
     try {
       execSync(`ngrok config add-authtoken ${authtoken}`, { stdio: 'pipe' });
-    } catch {}
+    } catch { }
   }
 
   console.log(`${COLOR_CYAN}[Ngrok] Starting ngrok tunnel for MCP Gateway on port ${gatewayPort}...${COLOR_RESET}`);
@@ -485,7 +483,7 @@ async function startNgrokTunnel(gatewayPort: string | number, authtoken?: string
         stdio: ['ignore', 'pipe', 'pipe'],
       });
       ngrokChildProcess = fallbackChild;
-    } catch {}
+    } catch { }
   });
 
   for (let i = 0; i < 12; i++) {
@@ -500,12 +498,13 @@ async function startNgrokTunnel(gatewayPort: string | number, authtoken?: string
 }
 
 function stopAllServices(customEnv: Record<string, string> = {}) {
+  resetTerminalLayout();
   console.log(`\n${COLOR_YELLOW}Stopping all running services and releasing ports...${COLOR_RESET}`);
   if (ngrokChildProcess) {
     try {
       ngrokChildProcess.kill('SIGKILL');
       ngrokChildProcess = null;
-    } catch {}
+    } catch { }
   }
   for (const [key] of activeProcesses) {
     stopService(key);
@@ -524,8 +523,8 @@ function showStatus() {
     const statusStr = isRunning
       ? `${COLOR_GREEN}RUNNING${COLOR_RESET} (PID: ${active.process.pid})`
       : isBuilt
-      ? `${COLOR_CYAN}READY${COLOR_RESET} (Built)`
-      : `${COLOR_RED}MISSING BUILD${COLOR_RESET}`;
+        ? `${COLOR_CYAN}READY${COLOR_RESET} (Built)`
+        : `${COLOR_RED}MISSING BUILD${COLOR_RESET}`;
 
     console.log(`${service.color}● ${service.name}${COLOR_RESET}`);
     console.log(`  Description : ${service.description}`);
@@ -536,21 +535,66 @@ function showStatus() {
   }
 }
 
+let ngrokBannerActive = false;
+const NGROK_BANNER_LINES = 10;
+
+/**
+ * Keep the ngrok endpoint banner pinned at the top of the terminal while
+ * child-process logs continue scrolling underneath it.
+ *
+ * DECSTBM is supported by common ANSI terminals (macOS Terminal, iTerm2,
+ * VS Code terminal, Linux terminals, etc.). For non-TTY output we fall back
+ * to a normal console.log so CI/piped output is not affected.
+ */
 function printNgrokBanner(ngrokUrl: string) {
   const mcpUrl = `${ngrokUrl}/mcp`;
   const sseUrl = `${ngrokUrl}/sse`;
-  console.log(`
-${COLOR_GREEN}${COLOR_BOLD}================================================================${COLOR_RESET}
-${COLOR_GREEN}${COLOR_BOLD}   🌐 MCP GATEWAY ONLINE PUBLIC ENDPOINTS (NGROK TUNNEL)       ${COLOR_RESET}
-${COLOR_GREEN}${COLOR_BOLD}================================================================${COLOR_RESET}
-  ● ${COLOR_BOLD}Online MCP Endpoint (HTTP)${COLOR_RESET}  : ${COLOR_CYAN}${COLOR_BOLD}${mcpUrl}${COLOR_RESET}
-  ● ${COLOR_BOLD}Live SSE Endpoint (Streaming)${COLOR_RESET}: ${COLOR_CYAN}${COLOR_BOLD}${sseUrl}${COLOR_RESET}
-  ● Health Check URL            : ${COLOR_BLUE}${ngrokUrl}/health${COLOR_RESET}
-  ● Active Bridges URL          : ${COLOR_BLUE}${ngrokUrl}/bridges${COLOR_RESET}
 
-  ${COLOR_YELLOW}👉 Copy & import "${COLOR_BOLD}${mcpUrl}${COLOR_RESET}${COLOR_YELLOW}" or "${COLOR_BOLD}${sseUrl}${COLOR_RESET}${COLOR_YELLOW}" as your remote MCP Server in online AI Clients / Cursor / Claude!${COLOR_RESET}
-${COLOR_GREEN}${COLOR_BOLD}================================================================${COLOR_RESET}
-`);
+  const banner = [
+    `${COLOR_GREEN}${COLOR_BOLD}================================================================${COLOR_RESET}`,
+    `${COLOR_GREEN}${COLOR_BOLD}   🌐 MCP GATEWAY ONLINE PUBLIC ENDPOINTS (NGROK TUNNEL)       ${COLOR_RESET}`,
+    `${COLOR_GREEN}${COLOR_BOLD}================================================================${COLOR_RESET}`,
+    `  ● ${COLOR_BOLD}Online MCP Endpoint (HTTP)${COLOR_RESET}  : ${COLOR_CYAN}${COLOR_BOLD}${mcpUrl}${COLOR_RESET}`,
+    `  ● ${COLOR_BOLD}Live SSE Endpoint (Streaming)${COLOR_RESET}: ${COLOR_CYAN}${COLOR_BOLD}${sseUrl}${COLOR_RESET}`,
+    `  ● Health Check URL            : ${COLOR_BLUE}${ngrokUrl}/health${COLOR_RESET}`,
+    `  ● Active Bridges URL          : ${COLOR_BLUE}${ngrokUrl}/bridges${COLOR_RESET}`,
+    '',
+    `  ${COLOR_YELLOW}👉 Copy & import "${COLOR_BOLD}${mcpUrl}${COLOR_RESET}${COLOR_YELLOW}" or "${COLOR_BOLD}${sseUrl}${COLOR_RESET}${COLOR_YELLOW}" as your remote MCP Server in online AI Clients / Cursor / Claude!${COLOR_RESET}`,
+    `${COLOR_GREEN}${COLOR_BOLD}================================================================${COLOR_RESET}`,
+  ];
+
+  if (!process.stdout.isTTY) {
+    console.log(`\n${banner.join('\n')}\n`);
+    return;
+  }
+
+  // Clear the screen once when switching to the split terminal layout.
+  if (!ngrokBannerActive) {
+    process.stdout.write('\x1b[2J\x1b[H');
+    ngrokBannerActive = true;
+  }
+
+  const terminalHeight = process.stdout.rows || 24;
+  const scrollTop = NGROK_BANNER_LINES + 1;
+  const scrollBottom = Math.max(scrollTop, terminalHeight);
+
+  // Reserve the top banner lines as a non-scrolling region.
+  process.stdout.write(`\x1b[${scrollTop};${scrollBottom}r`);
+
+  // Render the fixed banner at the top.
+  process.stdout.write('\x1b[H\x1b[J');
+  process.stdout.write(`${banner.join('\n')}\n`);
+
+  // Put subsequent console.log/console.error output inside the scrolling area.
+  process.stdout.write(`\x1b[${scrollTop};1H`);
+}
+
+function resetTerminalLayout() {
+  if (!ngrokBannerActive || !process.stdout.isTTY) return;
+
+  // Restore normal terminal scrolling before exiting.
+  process.stdout.write('\x1b[r\x1b[?25h');
+  ngrokBannerActive = false;
 }
 
 function printHeader() {
@@ -815,11 +859,9 @@ async function main() {
   if (command === 'start' || requestedServices.length > 0 || shouldGenerateConfig) {
     printHeader();
 
-    if (shouldGenerateConfig) {
-      const wsPort = options['WS_PORT'] || '8768';
-      const configPath = generateMcpConfigFromTemplate(targetProjectDir, wsPort);
-      options['BRIDGE_CONFIG_PATH'] = configPath;
-    }
+    const wsPort = options['WS_PORT'] || '8768';
+    const configPath = generateMcpConfigFromTemplate(targetProjectDir, wsPort);
+    options['BRIDGE_CONFIG_PATH'] = configPath;
 
     const toStart = requestedServices.length > 0
       ? Array.from(new Set(requestedServices))
@@ -852,7 +894,7 @@ async function main() {
     console.log(`\n${COLOR_GREEN}${COLOR_BOLD}Backend components launched successfully.${COLOR_RESET} Press Ctrl+C to stop all services.\n`);
 
     // Keep event loop active
-    setInterval(() => {}, 10000);
+    setInterval(() => { }, 10000);
   } else {
     console.error(`${COLOR_RED}Unknown command or arguments: ${args.join(' ')}${COLOR_RESET}\n`);
     printHelp();
